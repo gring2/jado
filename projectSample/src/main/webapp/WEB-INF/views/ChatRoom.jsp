@@ -16,16 +16,16 @@
 <script type="text/javascript">
 var ws = null;
 var nickname=null
+var notif = null;
 function connect() {
 nickname = document.getElementById("nick").value
   // 아래의 적색 경로는 서버측의 ServerEndPoint 를 사용해야 하고 ? 표시 오른쪽에는 파라미터가 온다
- var target = "ws://localhost:8666/app/echo?usr="+nickname; //서버에서 파라미터를 
+ var target = "ws://203.233.196.76:8666/app/echo?usr="+nickname; //서버에서 파라미터를 
  if ('WebSocket' in window) {
      ws = new WebSocket(target);
  } else if ('MozWebSocket' in window) {
      ws = new MozWebSocket(target);
  } else {
-     alert('WebSocket is not supported by this browser.');
      return;
  }
  ws.onopen = function () {
@@ -33,52 +33,17 @@ nickname = document.getElementById("nick").value
 	 	 document.getElementById("Stickif").setAttribute("src","sticky")
 	 document.getElementById("msg").innerText = 'Info: WebSocket connection opened.';
 	 document.getElementById('chat').onkeydown = function(event) {
-		 alert('ssss')
 		 if (event.keyCode == 13) {
              send();
          }
      };
  };
+ 
+   
  ws.onmessage = function (event) {
+	notif=event.data
 	$("#result").append('Received: '+event.data)
-	 function onShowNotification () {
-         console.log('notification is shown!');
-     }
-     function onCloseNotification () {
-         console.log('notification is closed!');
-     }
-     function onClickNotification () {
-         console.log('notification was clicked!');
-     }
-     function onErrorNotification () {
-         console.error('Error showing notification. You may need to request permission.');
-     }
-     function onPermissionGranted () {
-         console.log('Permission has been granted by the user');
-         doNotification();
-     }
-     function onPermissionDenied () {
-         console.warn('Permission has been denied by the user');
-     }
-     function doNotification () {
-     	var x = "test push"
-         var myNotification = new Notify('pak', {
-             body: event.data,
-             tag: 'pak',
-             notifyShow: onShowNotification,
-             notifyClose: onCloseNotification,
-             notifyClick: onClickNotification,
-             notifyError: onErrorNotification,
-             timeout: 4
-         });
-         myNotification.show();
-     }
-     if (!Notify.needsPermission) {
-         doNotification();
-     } else if (Notify.isSupported()) {
-         Notify.requestPermission(onPermissionGranted, onPermissionDenied);
-     }    
-	
+
  };
  ws.onclose = function () {
      document.getElementById("msg").innerText = 'Info: WebSocket connection closed.';
@@ -96,7 +61,6 @@ function send(event) {// JSON 문자열을 서버로 전송한다
         		};
        	var jsonStr = JSON.stringify(msg);
 		ws.send(jsonStr);
-		alert(msg.usrName+msg.way+msg.content)
         //	ws.send(msg);
             document.getElementById('chat').value = '';
         }
@@ -123,9 +87,110 @@ $(function(){
 	})
 
 })
+
+function pushNoti(data){
+	//$("#result").append('Received: '+data)
+
+	 function onShowNotification () {
+   }
+   function onCloseNotification () {
+   }
+   function onClickNotification () {
+   }
+   function onErrorNotification () {
+   }
+   function onPermissionGranted () {
+       doNotification();
+   }
+   function onPermissionDenied () {
+   }
+   
+   function doNotification () {
+   	 	var xx = data.split('\\":\\"')
+   	 	var data2 = xx[3].split('\\')
+   	 	
+       var myNotification = new Notify('pak', {
+           body: data2[0],
+           tag: 'pak',
+           notifyShow: onShowNotification,
+           notifyClose: onCloseNotification,
+           notifyClick: onClickNotification,
+           notifyError: onErrorNotification,
+           timeout: 4
+       });
+  
+       myNotification.show();
+   }
+   if (!Notify.needsPermission) {
+  	 doNotification();
+   } else if (Notify.isSupported()) {
+       Notify.requestPermission(onPermissionGranted, onPermissionDenied);
+   }    
+}
 </script>
 </head>
 <body>
+<script>
+function getHiddenProp(){
+    var prefixes = ['webkit','moz','ms','o'];
+    
+    // if 'hidden' is natively supported just return it
+    if ('hidden' in document) return 'hidden';
+    
+    // otherwise loop over all the known prefixes until we find one
+    for (var i = 0; i < prefixes.length; i++){
+        if ((prefixes[i] + 'Hidden') in document) 
+            return prefixes[i] + 'Hidden';
+    }
+
+    // otherwise it's not supported
+    return null;
+}
+
+function isHidden() {
+    var prop = getHiddenProp();
+    if (!prop) return false;
+    
+    return document[prop];
+}
+
+window.addEventListener("load", function simpleDemo() {
+  // use the property name to generate the prefixed event name
+  var visProp = getHiddenProp();
+  if (visProp) {
+    var evtname = visProp.replace(/[H|h]idden/,'') + 'visibilitychange';
+    document.addEventListener(evtname, visChange);
+  }
+  else {
+  }
+
+	function visChange() {
+
+			if (isHidden()) {
+      }
+			else {
+
+		}
+	}
+});
+$(function(){
+	setInterval(
+			function(){
+	    			if (isHidden()) {
+	    				if(notif==null){}
+	    				else{
+	    				pushNoti(notif)
+	    				notif=null
+	    				}
+	    			}
+	    			else {
+	    			}
+			}
+	,1000)
+})
+</script>
+<input type="text" id="visChangeText" value="">
+<br />
 <input type="text" id="nick"> 
 <input type="button" value="Connect" onClick="javascript:connect();"><span id="result"style=" border: 5px solid red;"> dadasdasdasd</span><br/>
 <input type="text" id="chat" onkeydown="javascript:send(event)"><br/><p/>

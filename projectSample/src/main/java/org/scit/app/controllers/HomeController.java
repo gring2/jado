@@ -6,8 +6,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ibatis.session.SqlSession;
+import org.scit.app.persistence.UserDao;
+import org.scit.app.vo.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class HomeController {
-	
+	@Autowired
+	SqlSession sqlSession;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
 	/**
@@ -44,5 +49,14 @@ public class HomeController {
 	public String cal(Locale locale, Model model) {
 		
 		return "calendar";
+	}
+	@RequestMapping(value="doAjax", method = RequestMethod.POST)
+	public @ResponseBody void doAjax(@RequestBody Map<String, Object> json){
+		String x =  (String) json.get("id");
+		System.out.println(x);
+		UserDao dao = sqlSession.getMapper(UserDao.class);
+
+		User member = 		dao.selectOne(x);
+		System.out.println(member);
 	}
 }

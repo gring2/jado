@@ -19,10 +19,9 @@ var scrapWs = null;
 window.onload=function connect() {
 	var url = window.location.href;
 	var arr = url.split("=")
-	alert(arr[1])
   // 아래의 적색 경로는 서버측의 ServerEndPoint 를 사용해야 하고 ? 표시 오른쪽에는 파라미터가 온다
- var target = "ws://localhost:8666/app/echo?usr="+arr[1]+"zombie"; //서버에서 파라미터를 
- var target2 = "ws://localhost:8666/app/scrap?usr="+arr[1]+"zombie"; //서버에서 파라미터를 
+ var target = "ws://203.233.196.76:8666/app/echo?usr="+arr[1]+"zombie"; //서버에서 파라미터를 
+ var target2 = "ws://203.233.196.76:8666/app/scrap?usr="+arr[1]+"zombie"; //서버에서 파라미터를 
  if ('WebSocket' in window) {
      ws = new WebSocket(target);
      scrapWs = new WebSocket(target2)
@@ -30,7 +29,6 @@ window.onload=function connect() {
      ws = new MozWebSocket(target);
      scrapWs = new MozWebSocket(target2)
  } else {
-     alert('WebSocket is not supported by this browser.');
      return;
  }
  ws.onopen = function () {
@@ -45,7 +43,6 @@ window.onload=function connect() {
 			"name" : data,
 			"age" : data			
 		};
-	 alert(mydata)
 		mydata = JSON.stringify(mydata);
 		mydata=$.ajax({
 			method:"post"

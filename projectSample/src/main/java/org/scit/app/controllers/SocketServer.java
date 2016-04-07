@@ -24,7 +24,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.scit.app.persistence.UserDao;
-import org.scit.app.util.Deliverer;
 import org.scit.app.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -106,7 +105,9 @@ public void handleMessage(Session session, String message) throws IOException {
 	String usrName = (String)jobj.get("usrName");
 	String way = (String)jobj.get("way");
 	String content = (String)jobj.get("content");
+	System.out.println(way);
 		if(way==null){
+			System.out.println("way is null");
 			sendToOne(usrName, sessionMap.get(this.nickname+"zombie"));
 	//	new UserController().getit(new ArrayList<Object>());
 			//	sqlSession.getMapper(UserDao.class);
@@ -173,15 +174,9 @@ private void sendToOne(String msg, Session ses) {
 
 public void handleClose(Session session) {
 
-	 String[] params = session.getQueryString().split("&");
-     String usr = params[0].split("=")[1];
- 	try{
- 		usr = URLDecoder.decode(usr,"UTF-8");//파라미터로 전달된 데이터는 URLDecoder를 사용하여 복원한다
- 	}catch(Exception e){
- 	}
- 	this.nickname=usr;
- 	sessionMap .put(this.nickname, session);
 
+ 	Session sesion = sessionMap .remove(this.nickname);
+ 	System.out.println(sesion.toString());
 	sessionUsers.remove(session);
 
 }

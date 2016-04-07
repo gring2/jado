@@ -24,7 +24,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.scit.app.persistence.UserDao;
-import org.scit.app.util.Deliverer;
 import org.scit.app.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
