@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scit.app.persistance.ProjectDAO"><!--실제 dao이름과 일치 -->
+  <insert id="insertProject" parameterType="Project">
+	insert into jado_project (proNum,title,startDate)
+	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),#{title},sysdate)
+	</insert>
+	
+	<insert id="insertUser" parameterType="HashMap">
+	insert into jado_member (userNum,proNum,memNum,agreed)
+	values (
+	#{userNum},#{proNum}, concat(#{userNum},#{proNum}),'N')
+	</insert>
+	
+	<select id="selectUserList" parameterType="String" resultType="User">
+	select * from jado_user where userNum in (select userNum from jado_member where proNum=#{proNum} and agreed='Y')
+	</select>  
+</mapper>

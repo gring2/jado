@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scit.app.persistance.UserDAO">
+	<insert id="insertUser" parameterType="User">
+	insert into jado_user
+	
+		(userNum,id,password,name
+		<if test="googleId != null">
+		,googleId
+		</if>
+		)				
+	values 
+	('U'||to_char(lpad(seq_user.nextval, 9, '0')),#{id},#{password},#{name}
+	<if test="googleId != null">
+		,#{googleId}
+		</if>
+	)
+	</insert>
+	<update id="agreeProject" parameterType="String">
+	update jado_member set agreed='Y' where memNum=#{memNum}
+	</update>
+	<delete id="disagreeProject" parameterType="String">
+	delete jado_member where memNum=#{memNum}
+	</delete>
+	
+	
+</mapper>
