@@ -63,6 +63,7 @@ CREATE TABLE JADO_PROJECT
 	title varchar2(100) NOT NULL,
 	startDate date DEFAULT sysdate NOT NULL,
 	enddate date,
+	userNum varchar2(10) NOT NULL,
 	PRIMARY KEY (proNum)
 );
 
@@ -165,6 +166,12 @@ ALTER TABLE JADO_MEMBER
 ;
 
 
+ALTER TABLE JADO_PROJECT
+	ADD FOREIGN KEY (userNum)
+	REFERENCES JADO_USER (userNum)
+;
+
+
 ALTER TABLE JADO_VOTE
 	ADD FOREIGN KEY (userNum)
 	REFERENCES JADO_USER (userNum)
@@ -193,10 +200,10 @@ insert into jado_user (userNum,id,password,name ,googleId)
 insert into jado_user (userNum,id,password,name ,googleId)				
 	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'1234','1234','1234','1234');
 
-insert into jado_project (proNum,title)
-	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'프로젝트1');
-insert into jado_project (proNum,title)
-	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'프로젝트2');
+insert into jado_project (proNum,title,userNum)
+	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'프로젝트1','U000000001');
+insert into jado_project (proNum,title,userNum)
+	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'프로젝트2','U000000003');
 
 insert into jado_member (userNum,proNum,memNum,agreed)
 	values ('U000000001','P000000001', concat('U000000001','P000000001'),'Y');
@@ -217,8 +224,5 @@ insert into jado_theme (thmNum,proNum,themeName)
 	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','채팅2-1');
 insert into jado_theme (thmNum,proNum,themeName)
 	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','채팅2-2');
-
-
-	
 
 
