@@ -1,4 +1,3 @@
-
 /* Drop Tables */
 
 DROP TABLE JADO_VOTE CASCADE CONSTRAINTS;
@@ -201,9 +200,9 @@ insert into jado_user (userNum,id,password,name ,googleId)
 	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'1234','1234','1234','1234');
 
 insert into jado_project (proNum,title,userNum)
-	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'ÌîÑÎ°úÏ†ùÌä∏1','U000000001');
+	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'«¡∑Œ¡ß∆Æ1','U000000001');
 insert into jado_project (proNum,title,userNum)
-	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'ÌîÑÎ°úÏ†ùÌä∏2','U000000003');
+	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'«¡∑Œ¡ß∆Æ2','U000000003');
 
 insert into jado_member (userNum,proNum,memNum,agreed)
 	values ('U000000001','P000000001', concat('U000000001','P000000001'),'Y');
@@ -217,12 +216,12 @@ insert into jado_member (userNum,proNum,memNum,agreed)
 	values ('U000000004','P000000002', concat('U000000004','P000000002'),'Y');
 	
 insert into jado_theme (thmNum,proNum,themeName)
-	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000001','Ï±ÑÌåÖ1-1');
+	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000001','√§∆√1-1');
 insert into jado_theme (thmNum,proNum,themeName)
-	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000001','Ï±ÑÌåÖ1-2');
+	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000001','√§∆√1-2');
 insert into jado_theme (thmNum,proNum,themeName)
-	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','Ï±ÑÌåÖ2-1');
+	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','√§∆√2-1');
 insert into jado_theme (thmNum,proNum,themeName)
-	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','Ï±ÑÌåÖ2-2');
+	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','√§∆√2-2');
 
 

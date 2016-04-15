@@ -6,6 +6,7 @@
 	<typeAliases>
 		<typeAlias type="org.scit.app.vo.User" alias="User" />
 		<typeAlias type="org.scit.app.vo.Gantchart" alias="Gantchart" />
+		<typeAlias type="org.scit.app.vo.GantMember" alias="GantMember" />
 		<typeAlias type="org.scit.app.vo.Meeting" alias="Meeting" />
 		<typeAlias type="org.scit.app.vo.Project" alias="Project" />
 		<typeAlias type="org.scit.app.vo.Scrap" alias="Scrap" />

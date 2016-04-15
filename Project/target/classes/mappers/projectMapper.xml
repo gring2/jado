@@ -16,5 +16,23 @@
 	
 	<select id="selectUserList" parameterType="String" resultType="User">
 	select * from jado_user where userNum in (select userNum from jado_member where proNum=#{proNum} and agreed='Y')
-	</select>  
+	</select> 
+	
+	<insert id="insertGantchart" parameterType="Gantchart">
+	insert into jado_gantchart values(#{gantNum},#{todo},#{proNum})
+	</insert> 
+	<insert id="insertGantMember" parameterType="GantMember">
+	insert into jado_gantmember values(#{userNum},#{gantNum},#{startDate},#{duration})
+	</insert> 
+	
+	<delete id="deleteGantchart" parameterType="String">
+	delete from jado_gantchart where proNum=#{proNum}	
+	</delete>
+	
+	<select id="selectGantchart" parameterType="String" resultType="Gantchart">
+	select * from jado_gantchart where proNum=#{proNum}	order by gantNum
+	</select>
+	<select id="selectGantMember" parameterType="String" resultType="GantMember">
+	select userNum, gantNum, to_char(startdate,'yyyy/mm/dd') startdate, duration from jado_gantmember where gantNum=#{gantNum} order by startdate
+	</select>
 </mapper>

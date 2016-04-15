@@ -51,20 +51,35 @@ public class HomeController {
 	SqlSession sqlSession;
 	
 	@RequestMapping(value="gantchartView",method=RequestMethod.GET)
-	public String movieList(Model model, HttpSession session){
+	public String gantchartView(Model model, HttpSession session){
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
 		session.setAttribute("proNum", "P000000001");
 		List<User> userList=dao.selectUserList((String)session.getAttribute("proNum"));
-		System.out.println(userList);
 		model.addAttribute("userList", userList);
-		return "gantchart";			
+		return "gantchartView";			
 	}
 	
 	@RequestMapping(value="insertGantchart",method=RequestMethod.POST)
-	public String movieList(GantchartWarpper warpper, HttpSession session){
+	public String insertGantchart(GantchartWarpper warpper, HttpSession session){
+		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		dao.deleteGantchart((String)session.getAttribute("proNum"));
 		for(int i=0;i<warpper.getList().size();i++){
-			System.out.println(warpper.getList().get(i));
+			dao.insertGantchart(warpper.getList().get(i));
+			for (int j=0;j<warpper.getList().get(i).getGantMemberList().size();j++){
+				dao.insertGantMember(warpper.getList().get(i).getGantMemberList().get(j));
+			}
+		}		
+		return "redirect:gantchartShowView";	
+	}
+	@RequestMapping(value="gantchartShowView",method=RequestMethod.GET)
+	public String gantchart(HttpSession session, Model model){
+		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		List<Gantchart> list=dao.selectGantchart((String)session.getAttribute("proNum"));
+		for (int i=0;i<list.size();i++){
+			list.get(i).setGantMemberList(dao.selectGantMember(list.get(i).getGantNum()));
+			System.out.println(list.get(i));
 		}
-		return "gantchart";			
+		model.addAttribute("list", list);
+		return "gantchartShow";			
 	}
 }

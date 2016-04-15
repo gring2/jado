@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import org.scit.app.vo.Chat;
+import org.scit.app.vo.GantMember;
 import org.scit.app.vo.Gantchart;
 import org.scit.app.vo.Meeting;
 import org.scit.app.vo.Project;
@@ -36,7 +37,13 @@ public interface ProjectDAO {
 	public List<Chat> selectChatList(Map<String,String> keyword);
 	public void insertStorage(Storage storage);	
 	public List<Storage> selectStorageList(String proNum);	
-	public void insertGantchart(List<Gantchart> gantchartList);	
-	public List<Gantchart> selectGantChart(String proNum);	
+	
+	public void insertGantchart(Gantchart gantchart);	
+	public void insertGantMember(GantMember gantMember);
+	
+	public List<Gantchart> selectGantchart(String proNum);	
 	public List<Meeting> selectMeetingList(String proNum);
+	public void deleteGantchart(String proNum);
+	public List<GantMember> selectGantMember(String gantNum);
+	
 }
