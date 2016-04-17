@@ -178,11 +178,12 @@
 					method:'POST',
 					url:'insertGantchart',
 					data: JSON.parse(string),
+// 					contentType:"application/json;charset=utf-8",
 					success: function(data){
-						window.location = 'gantchartShowView';
+						window.location.href = 'gantchartShowView';
 						}
 // 				    dataType: 'json',
-// 				    contentType:"application/json;charset=utf-8"
+				    
 				})
 				event.preventDefault();		
 			});

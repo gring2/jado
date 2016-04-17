@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Handles requests for the application home page.
@@ -60,16 +61,19 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="insertGantchart",method=RequestMethod.POST)
+	@ResponseBody
 	public String insertGantchart(GantchartWarpper warpper, HttpSession session){
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
 		dao.deleteGantchart((String)session.getAttribute("proNum"));
+		System.out.println(warpper.getList());
 		for(int i=0;i<warpper.getList().size();i++){
 			dao.insertGantchart(warpper.getList().get(i));
 			for (int j=0;j<warpper.getList().get(i).getGantMemberList().size();j++){
 				dao.insertGantMember(warpper.getList().get(i).getGantMemberList().get(j));
 			}
-		}		
-		return "redirect:gantchartShowView";	
+		}
+		System.out.println("성공");
+		return "success";//"redirect:gantchartShowView";	
 	}
 	@RequestMapping(value="gantchartShowView",method=RequestMethod.GET)
 	public String gantchart(HttpSession session, Model model){
