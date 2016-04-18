@@ -33,6 +33,13 @@
 	select * from jado_gantchart where proNum=#{proNum}	order by gantNum
 	</select>
 	<select id="selectGantMember" parameterType="String" resultType="GantMember">
-	select userNum, gantNum, to_char(startdate,'yyyy/mm/dd') startdate, duration from jado_gantmember where gantNum=#{gantNum} order by startdate
+	select 
+		jado_gantmember.userNum,
+		gantNum,
+		to_char(startdate,'yyyy/mm/dd') startdate,
+		name, 
+		duration
+		from jado_gantmember, jado_user
+		where gantNum=#{gantNum} and jado_gantmember.userNum=jado_user.userNum order by startdate
 	</select>
 </mapper>

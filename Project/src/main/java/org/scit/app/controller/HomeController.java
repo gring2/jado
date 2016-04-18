@@ -78,6 +78,7 @@ public class HomeController {
 	@RequestMapping(value="gantchartShowView",method=RequestMethod.GET)
 	public String gantchart(HttpSession session, Model model){
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		session.setAttribute("proNum", "P000000001");
 		List<Gantchart> list=dao.selectGantchart((String)session.getAttribute("proNum"));
 		for (int i=0;i<list.size();i++){
 			list.get(i).setGantMemberList(dao.selectGantMember(list.get(i).getGantNum()));
