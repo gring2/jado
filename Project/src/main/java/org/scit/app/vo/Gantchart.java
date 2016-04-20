@@ -4,10 +4,11 @@ import java.util.List;
 
 public class Gantchart {
 	private String gantNum;
-	private String todo;
 	private String proNum;
+	private String todo;
 	
 	private List<GantMember> gantMemberList;
+	
 	public String getGantNum() {
 		return gantNum;
 	}
@@ -37,8 +38,7 @@ public class Gantchart {
 	}
 	@Override
 	public String toString() {
-		return "Gantchart [gantNum=" + gantNum + ", todo=" + todo + ", proNum=" + proNum + ", gantMemberList="
-				+ gantMemberList + "]";
+		return "Gantchart [gantNum=" + gantNum + ", proNum=" + proNum + ", todo=" + todo +", gantMemberList=" + gantMemberList + "]";
 	}
 	
 	

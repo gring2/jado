@@ -9,6 +9,30 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script type="text/javascript">
+  $(function() {
+	  makeCalender()
+  })
+  function makeCalender(){
+		$(".calender").each(function(index,item){
+	    	var startDate=new Date($(this).siblings(".startDate").html());
+	    	var endDate=new Date($(this).siblings(".endDate").html());
+			var html='';
+			for (var i=1;i<=35;i++){
+				var day=new Date(year,month-1,i,9,0,0)
+				html+="<li date="+i+" class='"+days[day.getDay()]+" ui-selectee"
+				if(day.getDay()!=0 && day.getDay()!=6){
+ 					if(day>=startDate && day<=endDate){
+ 						html+=" ui-selected"
+ 					}					
+				} 
+				html+="'>"+day.getDate()+"</li>"					
+					
+			}
+			$(this).html(html);		  
+		})
+	}
+  </script>
   <style>
   ul {
     border: 1px solid #eee;
@@ -27,7 +51,7 @@
   }
   ul.connectedSortable {
     border: 1px solid #eee;
-    width: 1450px;
+    width: 1600px;
     min-height: 20px;
     list-style-type: none;
     margin: 0;
@@ -39,7 +63,7 @@
     margin: 0 5px 5px 5px;
     padding: 5px;
     font-size: 1.2em;
-    width: 1440px;
+    width: 1500px;
   }
   ul.calender {
  	border: 1px solid #eee;
@@ -65,26 +89,50 @@
 </head>
 <body>
 <table border="1">
-<tbody>
+<tr>
+	<th>
+		업무
+	</th>
+	<th>
+		담당
+	</th>
+	<th>
+		시작일
+	</th>
+	<th>
+		기한
+	</th>
+	<th>
+		<button id='left'>◀</button><span id="month"></span><button id='right'>▶</button>
+	</th>	
+	<th>
+	삭제
+	</th>
+</tr>
+	<c:forEach var="l" items="${gantchartlist}">
 	<tr>
-		<th>업무	</th><th>담당</th><th>시작일</th><th>기한</th><th>4월</th>
-	</tr>
-	<c:forEach var="l" items="${list}">
-	<tr>
-		<td class="todo">${l.todo}</td>
+		<td class="todo" gantNum="${l.gantNum}">${l.todo}</td>
  		<td colspan="4" class="user">
- 			<c:forEach var="m" items="${l.gantMemberList}">
-			<ul class="connectedSortable">
-				<li class="ui-state-highlight ui-draggable ui-draggable-handle" unum="U000000001" style="width: 1440px; height: 26px;">${m.name}
-				${m.startDate}${m.duration}
-<!-- 				<input type="text" class="duration"> -->
-<!-- 				<ul class="calender ui-selectable"><li class="ui-selectee">1</li><li class="ui-selectee">2</li><li class="ui-selectee">3</li><li class="ui-selectee ui-selected">4</li><li class="ui-selectee ui-selected">5</li><li class="ui-selectee ui-selected">6</li><li class="ui-selectee ui-selected">7</li><li class="ui-selectee ui-selected">8</li><li class="ui-selectee ui-selected">9</li><li class="ui-selectee ui-selected">10</li><li class="ui-selectee ui-selected">11</li><li class="ui-selectee ui-selected">12</li><li class="ui-selectee ui-selected">13</li><li class="ui-selectee ui-selected">14</li><li class="ui-selectee">15</li><li class="ui-selectee">16</li><li class="ui-selectee">17</li><li class="ui-selectee">18</li><li class="ui-selectee">19</li><li class="ui-selectee">20</li><li class="ui-selectee">21</li><li class="ui-selectee">22</li><li class="ui-selectee">23</li><li class="ui-selectee">24</li><li class="ui-selectee">25</li><li class="ui-selectee">26</li><li class="ui-selectee">27</li><li class="ui-selectee">28</li><li class="ui-selectee">29</li><li class="ui-selectee">30</li></ul></li><li class="ui-state-highlight ui-draggable ui-draggable-handle" unum="U000000002" style="width: 1440px; height: 26px;">qwer<span><button class="delete">삭제</button></span><input type="text" class="startDate hasDatepicker" id="dp1460704576169"><input type="text" class="duration"><ul class="calender ui-selectable"><li class="ui-selectee">1</li><li class="ui-selectee">2</li><li class="ui-selectee">3</li><li class="ui-selectee">4</li><li class="ui-selectee">5</li><li class="ui-selectee">6</li><li class="ui-selectee">7</li><li class="ui-selectee">8</li><li class="ui-selectee">9</li><li class="ui-selectee">10</li><li class="ui-selectee">11</li><li class="ui-selectee">12</li><li class="ui-selectee">13</li><li class="ui-selectee ui-selected">14</li><li class="ui-selectee ui-selected">15</li><li class="ui-selectee ui-selected">16</li><li class="ui-selectee ui-selected">17</li><li class="ui-selectee ui-selected">18</li><li class="ui-selectee ui-selected">19</li><li class="ui-selectee ui-selected">20</li><li class="ui-selectee ui-selected">21</li><li class="ui-selectee ui-selected">22</li><li class="ui-selectee ui-selected">23</li><li class="ui-selectee">24</li><li class="ui-selectee">25</li><li class="ui-selectee">26</li><li class="ui-selectee">27</li><li class="ui-selectee">28</li><li class="ui-selectee">29</li><li class="ui-selectee">30</li></ul></li></ul></td><td><button class="delete">삭제</button></td></tr><tr><td class="todo">zxcv</td><td colspan="4" class="user">	<ul class="connectedSortable ">	<li class="ui-state-highlight ui-draggable ui-draggable-handle" unum="U000000003" style="width: 1440px; height: 26px;">zxcv<span><button class="delete">삭제</button></span><input type="text" class="startDate hasDatepicker" id="dp1460704576170"><input type="text" class="duration"><ul class="calender ui-selectable"><li class="ui-selectee">1</li><li class="ui-selectee">2</li><li class="ui-selectee">3</li><li class="ui-selectee">4</li><li class="ui-selectee">5</li><li class="ui-selectee">6</li><li class="ui-selectee">7</li><li class="ui-selectee">8</li><li class="ui-selectee">9</li><li class="ui-selectee">10</li><li class="ui-selectee">11</li><li class="ui-selectee">12</li><li class="ui-selectee">13</li><li class="ui-selectee">14</li><li class="ui-selectee">15</li><li class="ui-selectee">16</li><li class="ui-selectee">17</li><li class="ui-selectee">18</li><li class="ui-selectee">19</li><li class="ui-selectee">20</li><li class="ui-selectee">21</li><li class="ui-selectee">22</li><li class="ui-selectee ui-selected">23</li><li class="ui-selectee ui-selected">24</li><li class="ui-selectee ui-selected">25</li><li class="ui-selectee ui-selected">26</li><li class="ui-selectee ui-selected">27</li><li class="ui-selectee ui-selected">28</li><li class="ui-selectee ui-selected">29</li><li class="ui-selectee ui-selected">30</li></ul></li></ul></td><td><button class="delete">삭제</button></td></tr></tbody> -->
+ 			<ul class="connectedSortable ui-sortable">
+ 			<c:forEach var="m" items="${l.gantMemberList}">			
+				<li class="ui-state-highlight ui-draggable ui-draggable-handle" usernum="${m.userNum}">
+				<span class="name">	${m.name}</span>&nbsp;
+				<button class="deleteMember">삭제</button>&nbsp;
+				<span class="startDate">${m.startDate}</span>&nbsp;
+				<span class="endDate">${m.endDate}</span>&nbsp;
+				<span class="duration">${m.duration}</span>&nbsp;
+				<span class="gantPercent">${m.gantPercent}%</span>&nbsp;
+				<ul class="calender ui-selectable">
+				</ul>
 				</li>
+			</c:forEach>
 			</ul>
-		</c:forEach>
-	<tr>
+		</td>
+		<td>
+			<button class="deleteTodo">삭제</button>
+		</td>
+	</tr>
 	</c:forEach>
-	</table>
-<br> 
+</table> 
 </body>
 </html>

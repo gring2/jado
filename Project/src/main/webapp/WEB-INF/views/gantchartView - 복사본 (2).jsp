@@ -133,7 +133,7 @@
 					html=html+work;
 					html=html+'<button class="deleteTodo">삭제</button>';
 					html=html+'</td>';
-					html=html+'<td  colspan="4" class="user">';
+// 					html=html+'<td  colspan="4" class="user">';
 					html=html+'	<ul class="connectedSortable">';
 					html=html+'	</ul>';
 					html=html+'</td>';

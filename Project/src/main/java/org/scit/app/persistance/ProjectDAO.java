@@ -37,13 +37,15 @@ public interface ProjectDAO {
 	public List<Chat> selectChatList(Map<String,String> keyword);
 	public void insertStorage(Storage storage);	
 	public List<Storage> selectStorageList(String proNum);	
+	public List<Meeting> selectMeetingList(String proNum);
 	
 	public void insertGantchart(Gantchart gantchart);	
-	public void insertGantMember(GantMember gantMember);
-	
+	public void deleteGantchart(String gantNum);	
 	public List<Gantchart> selectGantchart(String proNum);	
-	public List<Meeting> selectMeetingList(String proNum);
-	public void deleteGantchart(String proNum);
+	
+	public void insertGantMember(GantMember gantMember);
+	public void deleteGantMember(GantMember gantMember);
+	public void updateGantMember(GantMember gantMember);
 	public List<GantMember> selectGantMember(String gantNum);
 	
 }

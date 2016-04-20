@@ -3,6 +3,7 @@ package org.scit.app.controller;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.scit.app.persistance.ProjectDAO;
+import org.scit.app.vo.GantMember;
 import org.scit.app.vo.Gantchart;
 import org.scit.app.vo.GantchartWarpper;
 import org.scit.app.vo.User;
@@ -56,35 +58,64 @@ public class HomeController {
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
 		session.setAttribute("proNum", "P000000001");
 		List<User> userList=dao.selectUserList((String)session.getAttribute("proNum"));
+		List<Gantchart> gantchartlist=dao.selectGantchart((String)session.getAttribute("proNum"));
+		for (int i=0;i<gantchartlist.size();i++){
+			gantchartlist.get(i).setGantMemberList(dao.selectGantMember(gantchartlist.get(i).getGantNum()));
+			System.out.println(gantchartlist.get(i));
+		}
+		model.addAttribute("gantchartlist", gantchartlist);
 		model.addAttribute("userList", userList);
 		return "gantchartView";			
 	}
 	
 	@RequestMapping(value="insertGantchart",method=RequestMethod.POST)
 	@ResponseBody
-	public String insertGantchart(GantchartWarpper warpper, HttpSession session){
+	public String insertGantchart(Gantchart gantchart, HttpSession session){
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
 		dao.deleteGantchart((String)session.getAttribute("proNum"));
-		System.out.println(warpper.getList());
-		for(int i=0;i<warpper.getList().size();i++){
-			dao.insertGantchart(warpper.getList().get(i));
-			for (int j=0;j<warpper.getList().get(i).getGantMemberList().size();j++){
-				dao.insertGantMember(warpper.getList().get(i).getGantMemberList().get(j));
-			}
-		}
-		System.out.println("성공");
-		return "success";//"redirect:gantchartShowView";	
+		dao.insertGantchart(gantchart);		
+		return "success";
+	}
+	@RequestMapping(value="deleteGantchart",method=RequestMethod.POST)
+	@ResponseBody
+	public String deleteGantchart(String gantNum){
+		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		dao.deleteGantchart(gantNum);
+		return "success";
+	}
+	
+	@RequestMapping(value="insertGantMember",method=RequestMethod.POST)
+	@ResponseBody
+	public String insertGantMember(GantMember gantMember){
+		System.out.println(gantMember);
+		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		dao.insertGantMember(gantMember);
+		return "success";
+	}
+	@RequestMapping(value="updateGantMember",method=RequestMethod.POST)
+	@ResponseBody
+	public String updateGantMember(GantMember gantMember){
+		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		dao.updateGantMember(gantMember);
+		return "success";
+	}
+	@RequestMapping(value="deleteGantMember",method=RequestMethod.POST)
+	@ResponseBody
+	public String deleteGantMember(GantMember gantMember){
+		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		dao.deleteGantMember(gantMember);
+		return "success";
 	}
 	@RequestMapping(value="gantchartShowView",method=RequestMethod.GET)
-	public String gantchart(HttpSession session, Model model){
+	public String gantchartShowView(HttpSession session, Model model){
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
 		session.setAttribute("proNum", "P000000001");
-		List<Gantchart> list=dao.selectGantchart((String)session.getAttribute("proNum"));
-		for (int i=0;i<list.size();i++){
-			list.get(i).setGantMemberList(dao.selectGantMember(list.get(i).getGantNum()));
-			System.out.println(list.get(i));
+		List<Gantchart> gantchartlist=dao.selectGantchart((String)session.getAttribute("proNum"));
+		for (int i=0;i<gantchartlist.size();i++){
+			gantchartlist.get(i).setGantMemberList(dao.selectGantMember(gantchartlist.get(i).getGantNum()));
+			System.out.println(gantchartlist.get(i));
 		}
-		model.addAttribute("list", list);
+		model.addAttribute("gantchartlist", gantchartlist);
 		return "gantchartShow";			
 	}
 }

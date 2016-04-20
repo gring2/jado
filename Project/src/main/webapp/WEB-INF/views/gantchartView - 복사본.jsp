@@ -148,7 +148,7 @@
 	    })
 	    $('table').on('click','.deleteTodo',function(){
 			var tr=$(this).parent().parent()
-		    var string='{"gantNum":"'+$(this).parent().attr("gantNum")+'"}';
+		    var string='{"gantNum":"'+$(this).parent().siblings(".todo").attr("gantNum")+'"}';
 		    $.ajax({
 				method:'POST',
 				url:'deleteGantchart',

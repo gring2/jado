@@ -6,7 +6,9 @@ public class GantMember {
 	private String name;
 	private String gantNum;
 	private String startDate;	
+	private String endDate;
 	private Integer duration;
+	private Integer gantPercent;
 	
 	public String getUserNum() {
 		return userNum;
@@ -39,11 +41,26 @@ public class GantMember {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public Integer getGantPercent() {
+		return gantPercent;
+	}
+	public void setGantPercent(Integer gantPercent) {
+		this.gantPercent = gantPercent;
+	}
 	@Override
 	public String toString() {
 		return "GantMember [userNum=" + userNum + ", name=" + name + ", gantNum=" + gantNum + ", startDate=" + startDate
-				+ ", duration=" + duration + "]";
+				+ ", endDate=" + endDate + ", duration=" + duration + ", gantPercent=" + gantPercent + "]";
 	}
+	
+	
 	
 
 	

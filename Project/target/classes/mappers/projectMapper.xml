@@ -19,15 +19,21 @@
 	</select> 
 	
 	<insert id="insertGantchart" parameterType="Gantchart">
-	insert into jado_gantchart values(#{gantNum},#{todo},#{proNum})
+	insert into jado_gantchart values(#{gantNum},#{proNum},#{todo})
 	</insert> 
 	<insert id="insertGantMember" parameterType="GantMember">
-	insert into jado_gantmember values(#{userNum},#{gantNum},#{startDate},#{duration})
-	</insert> 
-	
+	insert into jado_gantmember (userNum,gantNum) values(#{userNum},#{gantNum})
+	</insert> 	
 	<delete id="deleteGantchart" parameterType="String">
-	delete from jado_gantchart where proNum=#{proNum}	
+	delete from jado_gantchart where gantNum=#{gantNum}	
 	</delete>
+	<delete id="deleteGantMember" parameterType="GantMember">
+	delete from jado_gantmember where gantNum=#{gantNum} and userNum=#{userNum}
+	</delete>
+	<update id="updateGantMember" parameterType="GantMember">
+		update jado_gantmember set startdate=#{startDate},endDate=#{endDate},duration=#{duration}
+		where gantNum=#{gantNum} and userNum=#{userNum}
+	</update>
 	
 	<select id="selectGantchart" parameterType="String" resultType="Gantchart">
 	select * from jado_gantchart where proNum=#{proNum}	order by gantNum
@@ -36,9 +42,11 @@
 	select 
 		jado_gantmember.userNum,
 		gantNum,
-		to_char(startdate,'yyyy/mm/dd') startdate,
+		to_char(startdate,'yyyy-mm-dd') startdate,
+		to_char(enddate,'yyyy-mm-dd') enddate,
 		name, 
-		duration
+		duration,
+		gantpercent
 		from jado_gantmember, jado_user
 		where gantNum=#{gantNum} and jado_gantmember.userNum=jado_user.userNum order by startdate
 	</select>
