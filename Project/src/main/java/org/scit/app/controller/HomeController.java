@@ -96,6 +96,7 @@ public class HomeController {
 	@ResponseBody
 	public String updateGantMember(GantMember gantMember){
 		ProjectDAO dao=sqlSession.getMapper(ProjectDAO.class);
+		System.out.println(gantMember);
 		dao.updateGantMember(gantMember);
 		return "success";
 	}

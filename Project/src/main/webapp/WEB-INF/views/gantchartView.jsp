@@ -6,63 +6,69 @@
 <head>
   <meta charset="utf-8">
   <title>jQuery UI Sortable - Connect lists</title>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> 
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  
+  <link rel="stylesheet" href="resources/css/platform.css" type="text/css">
+  <link rel="stylesheet" href="resources/css/gantt.css" type="text/css">
   <style>
-  ul {
-    border: 1px solid #eee;
-    width: 120px;
-    min-height: 20px;
-    list-style-type: none;
-    margin: 0;
-    padding: 5px 0 0 0;    
-    margin-right: 10px;
+  	fieldset ul li{
+  		display:inline;  	
+  	}
+	.uluser,.ulstartDate,.ulendDate,.ulduration,.ulgantPercent{ 
+		margin: 0 0px 0px 0px; 
+		padding: 0px;
+		width: 100px;
+		min-height: 20px;
+		list-style-type: none;
+	}
+     .calendar .ui-selecting { background: #FECA40; } 
+     .calendar .ui-selected { background: #F39814; color: white; } 
+  .resEdit {
+    padding: 15px;
   }
-  ul li {
-    margin: 0 5px 5px 5px;
-    padding: 5px;
-    font-size: 1.2em;
-    width: 100px;
+
+  .resLine {
+    width: 95%;
+    padding: 3px;
+    margin: 5px;
+    border: 1px solid #d0d0d0;
   }
-  ul.connectedSortable {
-    border: 1px solid #eee;
-    width: 1600px;
-    min-height: 20px;
-    list-style-type: none;
-    margin: 0;
-    padding: 5px 0 0 0;
-    float: left;
-    margin-right: 10px;
+
+  body {
+    overflow: hidden;
   }
-  ul.connectedSortable li {
-    margin: 0 5px 5px 5px;
-    padding: 5px;
-    font-size: 1.2em;
-    width: 1580px;
-  }
-  ul.calender {
- 	border: 1px solid #eee;
-    display:inline;
-  }
-  ul.calender li {
-    margin: 0 1px 1px 1px;
-    padding: 7px;
-    font-size: 1em;
-    width: 10px;
-    display:inline;
-  }
-  span{
-  	min-width: 100px;
+
+  .ganttButtonBar h1{
+    color: #000000;
+    font-weight: bold;
+    font-size: 28px;
+    margin-left: 10px;
   }
   
-  #feedback { font-size: 1.4em; }
-  .calender .ui-selecting { background: #FECA40; }
-  .calender .ui-selected { background: #F39814; color: white; }
-  .calender { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-  .calender li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
-  .calender .sun { background: #14dff3; }
-  .calender .sat { background: #14dff3; }
+  fieldset {
+	width: 50%;
+	border: 1px solid #dcdcdc;
+	border-radius: 15px;
+	padding: 10px;
+	font-size: 20px;
+}
+
+	legend {
+		background-color: #efefef;
+		border: 1px solid #dcdcdc;
+		border-radius: 10px;
+		padding: 10px 20px;
+		text-align: left;
+		text-transform: uppercase;
+		font-size: 20px;
+}
+
+	th {
+		font-size: 18px;
+	}
+  
   </style>
   <script>
   var today=new Date();
@@ -70,26 +76,25 @@
   var month=today.getMonth() + 1;
   var date=today.getDate()
   var lastday=(new Date(year,month, 0, 23, 59, 59)).getDate()
-  var days=['sun','mon','tue','wed','thu','fri','sat']
+  var days=['holyH','mon','tue','wed','thu','fri','holyH']
   var gantOrder=0
   $(function() {
-	  if($(".todo").length!=0) gantOrder=parseInt($(".todo").last().attr("gantNum").substr(1, 2))+1;
-	  $("#month").html(year+'년'+month+'월')	  
+	  if($(".trtodo").length!=0) gantOrder=parseInt($(".trtodo").last().attr("gantNum").substr(1, 2))+1;
+	  $("#month1").attr("colspan",lastday).html(year+'년'+month+'월')
+	  $("#month2").attr("colspan",62-lastday).html(year+'년'+(month+1)+'월')
+	  makeBasicCalendar()
+	  
 	  $( "#left" ).on("click",function(){
 		  month=month-1;
 		  if(month==0){
 			  month=12;
 			  year=year-1
 		  }
-		  $("#month").html(year+'년'+month+'월')	
+		  $("#month1").attr("colspan",lastday).html(year+'년'+month+'월')
+		  $("#month2").attr("colspan",62-lastday).html(year+'년'+(month+1)+'월')
 		  lastday=(new Date(year,month, 0, 23, 59, 59)).getDate()
-// 		  var html=""
-// 		  for (var i=1;i<=lastday;i++){
-// 			  var day=(new Date(year,month-1,i,0,0,0)).getDay()
-// 				html+="<li class='"+days[day]+"'>"+i+"</li>"
-//    			}
-// 		  $(".calender").html(html);
-		  makeCalender()
+		  makeCalendar()
+		  makeBasicCalendar()
 	  })
 	  $( "#right" ).on("click",function(){
 		  month=month+1;
@@ -97,19 +102,15 @@
 			  month=1;
 			  year=year+1
 		  }
-		  $("#month").html(year+'년'+month+'월')	
+		  $("#month1").attr("colspan",lastday).html(year+'년'+month+'월')
+		  $("#month2").attr("colspan",62-lastday).html(year+'년'+(month+1)+'월')
 		  lastday=(new Date(year,month, 0, 23, 59, 59)).getDate()
-// 		  var html=""
-// 			  for (var i=1;i<=lastday;i++){
-// 				  var day=(new Date(year,month-1,i,0,0,0)).getDay()
-//    				html+="<li class='"+days[day]+"'>"+i+"</li>"
-// 	   			}
-// 			$(".calender").html(html);
-			 makeCalender()
+		  makeCalendar()
+		  makeBasicCalendar()
 	  })
 	  
 		$( "ul #draggable" ).draggable({
-		  connectToSortable: ".connectedSortable",
+		  connectToSortable: ".uluser",
 		  helper: "clone",
 		  revert: "invalid"
 		});
@@ -128,17 +129,39 @@
 				data: JSON.parse(string),
 				success: function(data){
 					var html='';
-					html=html+'<tr>';
-					html=html+'<td class="todo" gantNum="'+gantNum+'">';		
-					html=html+work;
-					html=html+'<button class="deleteTodo">삭제</button>';
-					html=html+'</td>';
-					html=html+'<td  colspan="4" class="user">';
-					html=html+'	<ul class="connectedSortable">';
-					html=html+'	</ul>';
-					html=html+'</td>';
-					html=html+'</tr>';
-					$("table").append(html);
+					html+='<tr taskid="-1" class="taskEditRow trtodo" level="0" __template="TASKROW" gantNum="'+gantNum+'">';
+					html+='<th class="gdfCell" align="right" style="cursor:pointer;"></th>'
+					html+='<td class="gdfCell todo" style="padding-left: 18px;">';		
+					html+=work;
+					html+='<a href="#" class="deleteTodo">-</a>';
+					html+='</td>';
+					html+='<td class="gdfCell tduser" style="padding-left: 18px;">';
+					html+='	<ul class="uluser">';
+					html+='	</ul>';
+					html+='</td>';
+					html+='<td class="gdfCell tdstartDate">';
+					html+='	<ul class="ulstartDate">';
+					html+='	</ul>';
+					html+='</td>';
+					html+='<td class="gdfCell tdendDate">';
+					html+='	<ul class="ulendDate">';
+					html+='	</ul>';
+					html+='</td>';
+					html+='<td class="gdfCell tdduration">';
+					html+='	<ul class="ulduration">';
+					html+='	</ul>';
+					html+='</td>';
+					html+='<td class="gdfCell tdgantPercent">';
+					html+='	<ul class="ulgantPercent">';
+					html+='	</ul>';
+					html+='</td>';
+					html+='<td class="gdfCell taskAssigs"></td>'  
+					html+='</tr>';
+					var htmlca=''
+					htmlca+='<tbody class="tbcalendar" gantNum="'+gantNum+'">'
+					htmlca+='</tbody>'
+					$(".gdfTable").append(html);
+					$(".ganttTable").append(htmlca);
 					gantOrder+=1
 					sortable();
 				}				    
@@ -147,21 +170,21 @@
 		    
 	    })
 	    $('table').on('click','.deleteTodo',function(){
-			var tr=$(this).parent().parent()
-		    var string='{"gantNum":"'+$(this).parent().attr("gantNum")+'"}';
+			var gantNum=$(this).parent().parent().attr("gantNum")		    
+			var string='{"gantNum":"'+$(this).parent().parent().attr("gantNum")+'"}';
 		    $.ajax({
 				method:'POST',
 				url:'deleteGantchart',
 				data: JSON.parse(string),
 				success: function(data){
-					tr.remove();
+					$("[gantNum='"+gantNum+"']").remove()				
 				}
 			})		    	
 		});
 	    $('table').on('click','.deleteMember',function(){
 	    	var li=$(this).parent()
 	    	var userNum=$(this).parent().attr("userNum");
-        	var gantNum=$(this).parent().parent().parent().siblings('.todo').attr("gantNum");
+        	var gantNum=$(this).parent().parent().parent().parent().attr("gantNum");
         	var string='{';
 		    string+='"userNum":"'+userNum+'",'
 		    string+='"gantNum":"'+gantNum+'"}'
@@ -170,59 +193,114 @@
 				url:'deleteGantMember',
 				data: JSON.parse(string),
 				success: function(data){
-					li.remove();
+					li.remove()
+					$('.trtodo[gantNum="'+gantNum+'"] .tdstartDate .ulstartDate li[userNum="'+userNum+'"]').remove()
+					$('.trtodo[gantNum="'+gantNum+'"] .tdendDate .ulendDate li[userNum="'+userNum+'"]').remove()
+					$('.trtodo[gantNum="'+gantNum+'"] .tdduration .ulduration li[userNum="'+userNum+'"]').remove()
+					$('.trtodo[gantNum="'+gantNum+'"] .tdgantPercent .ulgantPercent li[userNum="'+userNum+'"]').remove()
+					$('.tbcalendar[gantNum="'+gantNum+'"]').children('tr[userNum="'+userNum+'"]').remove()
 				}
         	})				
 		});	
-	    makeCalender()
+	    makeCalendar()
 		sortable();
 	    selectable();
 	});
-	function makeCalender(){
-		$(".calender").each(function(index,item){
-	    	var startDate=new Date($(this).siblings(".startDate").html());
-	    	var endDate=new Date($(this).siblings(".endDate").html());
-			var html='';
-			for (var i=1;i<=35;i++){
-				var day=new Date(year,month-1,i,9,0,0)
-				html+="<li date="+i+" class='"+days[day.getDay()]+" ui-selectee"
-				if(day.getDay()!=0 && day.getDay()!=6){
+	function makeCalendar(){
+		$(".calendar").each(function(index,item){			
+			var userNum=$(this).attr("userNum");
+        	var gantNum=$(this).parent().attr("gantNum");
+        	var startDate=new Date($('.trtodo[gantNum="'+gantNum+'"] .tdstartDate .ulstartDate li[userNum="'+userNum+'"]').html())
+			var endDate=new Date($('.trtodo[gantNum="'+gantNum+'"] .tdendDate .ulendDate li[userNum="'+userNum+'"]').html())
+			var html="";
+ 			for (var i=1;i<=62;i++){
+ 				var day=new Date(year,month-1,i,9,0,0)
+ 				html+="<td date="+i+" class='"+days[day.getDay()]+" ganttBodyCell"
+ 				if(day.getDay()!=0 && day.getDay()!=6){
  					if(day>=startDate && day<=endDate){
  						html+=" ui-selected"
  					}					
 				} 
-				html+="'>"+day.getDate()+"</li>"					
-					
-			}
-			$(this).html(html);		  
+				html+="'>&nbsp;</td>"
+ 			}
+ 			$(this).html(html)
 		})
 	}
+	function makeBasicCalendar(){
+		var html="";
+		for (var i=1;i<=62;i++){
+			var day=new Date(year,month-1,i,9,0,0)
+			html+="<th date="+i+" class='"+days[day.getDay()]+" style='width: 25px'>"+day.getDate()+"</td>"
+		}
+		$("#ganttHead2").html(html)
+	}
+	
   	function sortable(){
-  		$( "td ul.connectedSortable" ).sortable({
-    		receive: function( event, ui ) {
+  		var indexBefore = -1
+  		$( "td ul.uluser" ).sortable({
+  			start: function(event, ui) {
+  		        indexBefore = ui.item.index();
+  		    },
+  			update: function( event, ui ){
+  				var indexAfter = ui.item.index()
+  				var gantNum=$(this).parent().parent().attr("gantNum");
+  				var startDate=$($(this).parent().siblings(".tdstartDate").children(".ulstartDate").children("li")[indexBefore])
+				var endDate=$($(this).parent().siblings(".tdendDate").children(".ulendDate").children("li")[indexBefore])
+				var duration=$($(this).parent().siblings(".tdduration").children(".ulduration").children("li")[indexBefore])
+				var gantPercent=$($(this).parent().siblings(".tdgantPercent").children(".ulgantPercent").children("li")[indexBefore])		
+				var calendar=$($('.tbcalendar[gantNum="'+gantNum+'"] tr')[indexBefore])
+				if (indexBefore<indexAfter) {
+					startDate.insertAfter($($(this).parent().siblings(".tdstartDate").children(".ulstartDate").children("li:eq("+indexAfter+")")))
+	  				endDate.insertAfter($($(this).parent().siblings(".tdendDate").children(".ulendDate").children("li:eq("+indexAfter+")")))
+	  				duration.insertAfter($($(this).parent().siblings(".tdduration").children(".ulduration").children("li:eq("+indexAfter+")")))
+	  				gantPercent.insertAfter($($(this).parent().siblings(".tdgantPercent").children(".ulgantPercent").children("li:eq("+indexAfter+")")))				
+	  				calendar.insertAfter($('.tbcalendar[gantNum="'+gantNum+'"]').children("tr:eq("+indexAfter+")"))
+				}
+				else {
+					startDate.insertBefore($($(this).parent().siblings(".tdstartDate").children(".ulstartDate").children("li:eq("+indexAfter+")")))
+	  				endDate.insertBefore($($(this).parent().siblings(".tdendDate").children(".ulendDate").children("li:eq("+indexAfter+")")))
+	  				duration.insertBefore($($(this).parent().siblings(".tdduration").children(".ulduration").children("li:eq("+indexAfter+")")))
+	  				gantPercent.insertBefore($($(this).parent().siblings(".tdgantPercent").children(".ulgantPercent").children("li:eq("+indexAfter+")")))				
+	  				calendar.insertBefore($('.tbcalendar[gantNum="'+gantNum+'"]').children("tr:eq("+indexAfter+")"))
+				}
+  			},
+    		receive: function( event, ui ) {			
+    			var thisOne=$(this);   			
 				var box=ui.helper;
-				box.css("width: 950px;")
-				box.prepend()
-				box.append('&nbsp;<button class="deleteMember">삭제</button>&nbsp;<span class="startDate"></span>&nbsp;<span class="endDate"></span>&nbsp;<span class="duration"></span>&nbsp;<span class="gatPercent">0%</span>&nbsp;');
+				box.append("<a href='#' class='deleteMember'>-</a>")
+				var index=box.index()
 				var userNum=box.attr("userNum");
-	        	var gantNum=$(this).parent().siblings('.todo').attr("gantNum");
+	        	var gantNum=$(this).parent().parent().attr("gantNum");	        	
 	        	alert(userNum+"/"+gantNum)
 	        	var string='{';
 			    string+='"userNum":"'+userNum+'",'
 			    string+='"gantNum":"'+gantNum+'"}'
-	        	$.ajax({
+			    
+			    $.ajax({
 			    	method:'POST',
 					url:'insertGantMember',
 					data: JSON.parse(string),
 					success: function(data){
 						var html="";
-		    			html=html+'<ul class="calender">';
-		     			for (var i=1;i<=35;i++){
+		    			html+="<tr class='calendar ganttBody' userNum='"+userNum+"'>";
+		     			for (var i=1;i<=62;i++){
 		     				var day=new Date(year,month-1,i,9,0,0)
-		     				html+="<li date="+i+" class='"+days[day.getDay()]+"'>"+day.getDate()+"</li>"
+		     				html+="<td date="+i+" class='"+days[day.getDay()]+" ganttBodyCell'>&nbsp;</td>"
 		     			}
-		     			html=html+'</ul>';
-		     			box.append(html);
+		     			html+="</tr>"
+						if (thisOne.children("li").length-index!=1){
+							thisOne.parent().siblings(".tdstartDate").children(".ulstartDate").children("li:eq("+index+")").before("<li userNum='"+userNum+"'>&nbsp;</li>")
+							thisOne.parent().siblings(".tdendDate").children(".ulendDate").children("li:eq("+index+")").before("<li userNum='"+userNum+"'>&nbsp;</li>")
+							thisOne.parent().siblings(".tdduration").children(".ulduration").children("li:eq("+index+")").before("<li userNum='"+userNum+"'>&nbsp;</li>")
+							thisOne.parent().siblings(".tdgantPercent").children(".ulgantPercent").children("li:eq("+index+")").before("<li userNum='"+userNum+"'>0%</li>")						
+			     			$('.tbcalendar[gantNum="'+gantNum+'"]').children("tr:eq("+index+")").before(html);									
+						} else{							
+			     			thisOne.parent().siblings(".tdstartDate").children(".ulstartDate").append("<li userNum='"+userNum+"'>&nbsp;</li>")
+							thisOne.parent().siblings(".tdendDate").children(".ulendDate").append("<li userNum='"+userNum+"'>&nbsp;</li>")
+							thisOne.parent().siblings(".tdduration").children(".ulduration").append("<li userNum='"+userNum+"'>&nbsp;</li>")
+							thisOne.parent().siblings(".tdgantPercent").children(".ulgantPercent").append("<li userNum='"+userNum+"'>0%</li>")		
+			     			$('.tbcalendar[gantNum="'+gantNum+'"]').append(html)			     			
+						}
 		     			selectable();
 					}
 	        	})							    		    
@@ -230,13 +308,13 @@
     	});
   	}
   	function selectable(){
-  		$( ".calender" ).each(function(index,item){
+  		$( ".calendar" ).each(function(index,item){
 	    	 $(this).selectable({
 		        stop: function() {
-		        	$(".sat,.sun").removeClass("ui-selected");
+		        	$(".holyH").removeClass("ui-selected");
 		        	var select=$(this).children(".ui-selected");
-		        	var userNum=$(this).parent().attr("userNum");
-		        	var gantNum=$(this).parent().parent().parent().siblings('.todo').attr("gantNum");
+		        	var userNum=$(this).attr("userNum");
+		        	var gantNum=$(this).parent().attr("gantNum");
 		        	var startDate=(new Date(year,month-1,parseInt(select.first().attr("date")),9,0,0)).toISOString().substring(0, 10);
 		        	var endDate=(new Date(year,month-1,parseInt(select.last().attr("date")),9,0,0)).toISOString().substring(0, 10);
 		        	var duration=select.length		    			        	 	
@@ -252,9 +330,9 @@
 						url:'updateGantMember',
 						data: JSON.parse(string),
 						success: function(data){
-							thisOne.parent().children(".startDate").html(startDate);
-							thisOne.parent().children(".endDate").html(endDate);
-							thisOne.parent().children(".duration").html(duration);
+							$('.trtodo[gantNum="'+gantNum+'"] .tdstartDate .ulstartDate li[userNum="'+userNum+'"]').html(startDate)
+							$('.trtodo[gantNum="'+gantNum+'"] .tdendDate .ulendDate li[userNum="'+userNum+'"]').html(endDate)
+							$('.trtodo[gantNum="'+gantNum+'"] .tdduration .ulduration li[userNum="'+userNum+'"]').html(duration)
 						}
 		        	})
 		        	
@@ -262,64 +340,116 @@
 			});
 	    })
   	}
+  	
   </script>
 </head>
-<body>
+<body style="background-color: #fff; overflow-y: auto; overflow-x: auto;" class="unselectable" unselectable="on">
 <input type="hidden" id="proNum" value=${proNum}>
-<button id="new">업무추가</button>
-<ul class="">
-	<li>팀원</li>
-	
-	<c:forEach var="u" items="${userList}">
-		<li id="draggable" class="ui-state-highlight" userNum=${u.userNum}><span class="name">${u.name}</span></li>
-	</c:forEach>
-</ul>
 
-<table border="1">
-<tr>
-	<th>
-		업무
-	</th>
-	<th>
-		담당
-	</th>
-	<th>
-		시작일
-	</th>
-	<th>
-		종료일
-	</th>
-	<th>
-		기한
-	</th>
-	<th>
-		진행도
-	</th>
-	<th>
-		<button id='left'>◀</button><span id="month"></span><button id='right'>▶</button>
-	</th>	
-</tr>
+<fieldset>
+	<legend>Member List</legend>
+	<ul>	
+		<c:forEach var="u" items="${userList}">
+			<li id="draggable" userNum=${u.userNum} style="list-style: none;">${u.name}</li>
+		</c:forEach>
+	</ul>
+</fieldset>
+<br />
+
+
+
+<!-- 공정도 표 -->
+<div id="workSpace" style="padding: 0px; overflow-y: auto; overflow-x: hidden; border: 1px solid rgb(229, 229, 229); position: relative; margin: 0px 5px; width: 1900px; height: 847px;">
+<div class="splitterContainer">
+<div class="splitElement splitBox1" style="width: 580px; left: 0px;">
+<div class="gdfWrapper">
+<table class="gdfTable" cellspacing="0" cellpadding="0" __template="TASKSEDITHEAD" style="width: 0px;">     
+	<thead>     
+		<tr style="height:40px;">
+			<th class="gdfColHeader" style="width:35px;"><a href="#" id="new">+</a></th>
+			<th class="gdfColHeader gdfResizable" style="width:100px; font-size: 15px;">assignees</th> 
+			<th class="gdfColHeader gdfResizable" style="width:100px; font-size: 15px;">name</th>       
+			<th class="gdfColHeader gdfResizable" style="width:80px; font-size: 15px;">start</th>       
+			<th class="gdfColHeader gdfResizable" style="width:80px; font-size: 15px;">end</th>       
+			<th class="gdfColHeader gdfResizable" style="width: 90px; font-size: 15px;">dur.</th>       
+			<th class="gdfColHeader gdfResizable" style="width: 90px; font-size: 15px;">pro.</th>       
+		</tr>     
+	</thead>   
+	<tbody>	
 	<c:forEach var="l" items="${gantchartlist}">
-	<tr>
-		<td class="todo" gantNum="${l.gantNum}">${l.todo}<button class="deleteTodo">삭제</button></td>
- 		<td colspan="6" class="user">
- 			<ul class="connectedSortable ui-sortable">
- 			<c:forEach var="m" items="${l.gantMemberList}">			
-				<li class="ui-state-highlight ui-draggable ui-draggable-handle" usernum="${m.userNum}">
-				<span class="name">	${m.name}</span>&nbsp;
-				<button class="deleteMember">삭제</button>&nbsp;
-				<span class="startDate">${m.startDate}</span>&nbsp;
-				<span class="endDate">${m.endDate}</span>&nbsp;
-				<span class="duration">${m.duration}</span>&nbsp;
-				<span class="gantPercent">${m.gantPercent}%</span>&nbsp;
-				<ul class="calender ui-selectable">
-				</ul>
-				</li>
-			</c:forEach>
+	<tr taskid="-1" class="taskEditRow trtodo" level="0" __template="TASKROW" gantnum="${l.gantNum}">
+		<th class="gdfCell" align="right" style="cursor:pointer;"></th>
+		<td class="gdfCell todo" style="padding-left: 18px;">${l.todo}<a href="#" class="deleteTodo">-</a></td>
+		<td class="gdfCell tduser" style="padding-left: 18px;">	
+			<ul class="uluser ui-sortable">
+				<c:forEach var="m" items="${l.gantMemberList}">	
+				<li usernum="${m.userNum}" style="list-style: none; width: 27px; height: 16px;" class="ui-draggable ui-draggable-handle">${m.name}<a href='#' class='deleteMember'>-</a></li>
+				</c:forEach>
 			</ul>
 		</td>
+		<td class="gdfCell tdstartDate">
+			<ul class="ulstartDate">
+				<c:forEach var="m" items="${l.gantMemberList}">	
+				<li usernum="${m.userNum}">${m.startDate}</li>
+				</c:forEach>
+			</ul>
+		</td>
+		<td class="gdfCell tdendDate">
+			<ul class="ulendDate">
+				<c:forEach var="m" items="${l.gantMemberList}">	
+				<li usernum="${m.userNum}">${m.endDate}</li>
+				</c:forEach>
+			</ul>
+		</td>
+		<td class="gdfCell tdduration">
+			<ul class="ulduration">
+				<c:forEach var="m" items="${l.gantMemberList}">	
+				<li usernum="${m.userNum}">${m.duration}</li>
+				</c:forEach>
+			</ul>
+		</td>
+		<td class="gdfCell tdgantPercent">
+			<ul class="ulgantPercent">
+				<c:forEach var="m" items="${l.gantMemberList}">	
+				<li usernum="${m.userNum}">${m.gantPercent}%</li>
+				</c:forEach>
+			</ul>
+		</td>
+		<td class="gdfCell taskAssigs"></td>
 	</tr>
 	</c:forEach>
-</table> 
+	</tbody>
+</table>
+</div>
+</div>
+
+<div class="splitElement splitBox2" style="width: 1200px; left: 575;">
+<div class="gantt unselectable hasSVG" style="position: relative; width: 1524px;">
+<table cellspacing="0" cellpadding="0" style="width: 1524px; height: 100px;" class="ganttTable">
+<thead>
+<tr id="ganttHead1">
+<th colspan="31"><button id='left'>◀</button><span id="month1"></span></th>
+<th colspan="31"><span id="month2"></span><button id='right'>▶</button></th>
+</tr>
+<tr id="ganttHead2">
+
+</tr>
+</thead>
+<c:forEach var="l" items="${gantchartlist}">
+<tbody class="tbcalendar" gantnum="${l.gantNum}">
+	<c:forEach var="m" items="${l.gantMemberList}">			
+	<tr class="calendar ganttBody trui-selectable" usernum="${m.userNum}">
+	</tr>
+	
+	</c:forEach>
+</tbody>
+</c:forEach>
+</table>
+</div>
+</div>
+<div class="splitElement vSplitBar" unselectable="on" style="padding-top: 422.5px; left: 570px;">|</div>
+</div>
+</div>
+
 </body>
 </html>
