@@ -1,4 +1,4 @@
-
+f
 /* Drop Tables */
 
 DROP TABLE JADO_NOTICE CASCADE CONSTRAINTS;
@@ -38,14 +38,11 @@ CREATE TABLE JADO_SCRAP
 
 CREATE TABLE JADO_CHAT
 (
-	CHATNUM varchar2(20 char) NOT NULL,
 	CONTENT varchar2(4000 char) NOT NULL,
 	CHATTYPE varchar2(10 char),
-	STARTDATE date,
 	CHATDATE date DEFAULT sysdate  NOT NULL,
-	MEMNUM varchar2(20 char) NOT NULL,
 	THMNUM varchar2(10 char) NOT NULL,
-	CONSTRAINT SYS_C007544 PRIMARY KEY (CHATNUM)
+	ID varchar2(100 char)
 );
 
 
@@ -66,7 +63,8 @@ CREATE TABLE JADO_GANTMEMBER
 	ENDDATE date,
 	DURATION number(3,0),
 	GANTPERCENT number(3,0) DEFAULT 0
-
+,
+	UNIQUE (USERNUM, GANTNUM)
 );
 
 
@@ -138,12 +136,6 @@ ALTER TABLE JADO_GANTMEMBER
 ;
 
 
-ALTER TABLE JADO_CHAT
-	ADD CONSTRAINT SYS_C007579 FOREIGN KEY (MEMNUM)
-	REFERENCES JADO_MEMBER (MEMNUM)
-;
-
-
 ALTER TABLE JADO_NOTICE
 	ADD FOREIGN KEY (PRONUM)
 	REFERENCES JADO_PROJECT (PRONUM)
@@ -203,6 +195,9 @@ ALTER TABLE JADO_PROJECT
 	REFERENCES JADO_USER (USERNUM)
 ;
 
+alter table jado_chat add constraint fk_chat_id foreign key(id)
+references jado_user(id);
+
 alter table jado_notice add constraint fk_notice_id foreign key(id)
 references jado_user(id);
 
@@ -210,20 +205,17 @@ alter table jado_msg add constraint fk_receiver_msg foreign key(receiver)
 references jado_user(id);
 
 alter table jado_msg add constraint fk_sender2_msg foreign key(sender)
-references jado_user(id)
+references jado_user(id);
 
 drop sequence seq_user;
 drop sequence seq_pro;
 drop sequence seq_thm;
-drop sequence seq_cht;
 
 CREATE SEQUENCE seq_user INCREMENT BY 1 START WITH 1 MAXVALUE 999999999;
 
 CREATE SEQUENCE seq_pro INCREMENT BY 1 START WITH 1 MAXVALUE 999999999;
 
 CREATE SEQUENCE seq_thm INCREMENT BY 1 START WITH 1 MAXVALUE 999999999;
-
-CREATE SEQUENCE seq_cht INCREMENT BY 1 START WITH 1 MAXVALUE 9999999999999999999;
 
 
 insert into jado_user (userNum,id,password,name ,googleId)				
