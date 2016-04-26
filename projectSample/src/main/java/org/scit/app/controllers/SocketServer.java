@@ -1,7 +1,11 @@
 package org.scit.app.controllers;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,15 +33,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @ServerEndpoint("/echo")
-@Controller
 public class SocketServer {
-	@Autowired
-	SqlSession sqlSession;
 static Set<Session> sessionUsers = Collections.synchronizedSet(new HashSet<Session>());
 private String nickname;
+private String ProNum;
+private String Protheme;
 // 클라이언트가 새로 접속할 때마다 한개의 Session 객체가 생성된다.
 // Session 객체를 컬렉션에 보관하여 두고 해당 클라이언트에게 데이터를 전송할 때마다 사용한다
 private Session session;
+static FileOutputStream fos = null;
+private static final HashMap<String, HashMap> Service = new HashMap();
 private static final HashMap<String, Session> sessionMap = new HashMap();
 	
 
@@ -66,12 +71,43 @@ public void handleOpen(Session userSession) {
     this.session = userSession;
     String[] params = session.getQueryString().split("&");
     String usr = params[0].split("=")[1];
-	try{
-		usr = URLDecoder.decode(usr,"UTF-8");//파라미터로 전달된 데이터는 URLDecoder를 사용하여 복원한다
-	}catch(Exception e){
+    this.nickname=usr;
+    try{
+    String pNum = params[1].split("=")[1];
+    String theme = params[2].split("=")[1];
+    System.out.println(theme+"theme");
+    try{
+    	usr = URLDecoder.decode(usr,"UTF-8");//파라미터로 전달된 데이터는 URLDecoder를 사용하여 복원한다
+    }catch(Exception e){
+    }
+   
+    this.ProNum=pNum;
+    this.Protheme=theme;
+    System.out.println(this.nickname);
+    HashMap<String, HashMap>proTemp = Service.get(pNum);
+    if(proTemp==null){
+    	HashMap<String, Session>Theme = new HashMap<String, Session>();
+    	HashMap<String, HashMap>project= new HashMap<String, HashMap>();
+    	Theme.put(this.nickname, this.session);
+    	project.put(theme, Theme);
+    	Service.put(pNum, project);
+    }else{
+    	HashMap<String, Session>themeTemp = proTemp.get(theme);
+    	if(themeTemp==null){
+        	HashMap<String, Session>Theme = new HashMap<String, Session>();
+           	Theme.put(this.nickname, this.session);
+        	proTemp.put(theme, Theme);
+        	Service.replace(pNum, proTemp);
+    	}else{
+    		themeTemp.put(this.nickname, session);
+    	}
+    }
 	}
-	this.nickname=usr;
-	sessionMap .put(this.nickname, session);
+    catch(ArrayIndexOutOfBoundsException e){
+    	
+    }finally {
+    	sessionMap .put(this.nickname, session);
+	}
 }
 
 
@@ -96,7 +132,6 @@ public void handleOpen(Session userSession) {
 @OnError
 public void onError(Session session, Throwable thr)  {
 	System.out.println("dddd"+session.toString()+" : "+thr.toString());
-	sqlSession.getMapper(UserDao.class);
 	}
 @OnMessage
 
@@ -108,34 +143,20 @@ public void handleMessage(Session session, String message) throws IOException {
 	System.out.println(way);
 		if(way==null){
 			System.out.println("way is null");
+			System.out.println(sessionMap.get(this.nickname+"zombie"));
 			sendToOne(usrName, sessionMap.get(this.nickname+"zombie"));
-	//	new UserController().getit(new ArrayList<Object>());
-			//	sqlSession.getMapper(UserDao.class);
-		}else if(way.equals("chat")){
-			System.out.println("dasdasdasdas");
-/*			Iterator<Session> iterator = sessionUsers.iterator();
-			while(iterator.hasNext()) {
-
-			iterator.next().getBasicRemote().
-                   sendText(JSONConverter(message, usrName));
-
-		} */
-			Set<String>keyset = sessionMap.keySet();
-			Iterator<String> keyIte = keyset.iterator();
-			while(keyIte.hasNext()){
-				String x = keyIte.next();
-				if(x.contains("zombie")){
-					System.out.println("Zombie Arized");
-				}else{
-					sessionMap.get(x).getBasicRemote().
-	                   sendText(JSONConverter(message, usrName));
-				}
+		}else if(way.equals("chat")||way.equals("cal")){
+			HashMap<String, Session> targets= (HashMap<String, Session>) Service.get(this.ProNum).get(this.Protheme);
+			Set<String> keyset = targets.keySet();
+			for(String key:keyset){
+				targets.get(key).getBasicRemote().
+                sendText(JSONConverter(way+":"+content, usrName));
 			}
 		}
-				
 		
 
 }
+
 
 private void sendToOne(String msg, Session ses) {
   	try {
@@ -173,9 +194,11 @@ private void sendToOne(String msg, Session ses) {
 @OnClose
 
 public void handleClose(Session session) {
-
-
- 	Session sesion = sessionMap .remove(this.nickname);
+	System.out.println("inCLose"+session);
+	HashMap<String, Session> targets= (HashMap<String, Session>) Service.get(this.ProNum).get(this.Protheme);
+	targets.remove(this.nickname);
+	Service.get(this.ProNum).replace(this.Protheme, targets);
+	Session sesion = sessionMap .remove(this.nickname);
  	System.out.println(sesion.toString());
 	sessionUsers.remove(session);
 

@@ -35,9 +35,12 @@ public class CalServer {
 	SqlSession sqlSession;
 static Set<Session> sessionUsers = Collections.synchronizedSet(new HashSet<Session>());
 private String nickname;
+private String ProNum;
+private String Protheme;
 // 클라이언트가 새로 접속할 때마다 한개의 Session 객체가 생성된다.
 // Session 객체를 컬렉션에 보관하여 두고 해당 클라이언트에게 데이터를 전송할 때마다 사용한다
 private Session session;
+private static final HashMap<String, HashMap> Service = new HashMap();
 private static final HashMap<String, Session> sessionMap = new HashMap();
 	
 
@@ -62,16 +65,51 @@ private static final HashMap<String, Session> sessionMap = new HashMap();
 @OnOpen
 
 public void handleOpen(Session userSession) {
+	System.out.println("In calendar");
 	sessionUsers.add(userSession);
     this.session = userSession;
     String[] params = session.getQueryString().split("&");
     String usr = params[0].split("=")[1];
-	try{
-		usr = URLDecoder.decode(usr,"UTF-8");//파라미터로 전달된 데이터는 URLDecoder를 사용하여 복원한다
-	}catch(Exception e){
+    this.nickname=usr;
+    try{
+    String pNum = params[1].split("=")[1];
+    String theme = params[2].split("=")[1];
+    try{
+    	usr = URLDecoder.decode(usr,"UTF-8");//파라미터로 전달된 데이터는 URLDecoder를 사용하여 복원한다
+    }catch(Exception e){
+    }
+   
+    this.ProNum=pNum;
+    this.Protheme=theme;
+    System.out.println(this.nickname);
+    HashMap<String, HashMap>proTemp = Service.get(pNum);
+    if(proTemp==null){
+    	HashMap<String, Session>Theme = new HashMap<String, Session>();
+    	HashMap<String, HashMap>project= new HashMap<String, HashMap>();
+    	Theme.put(this.nickname, this.session);
+    	project.put(theme, Theme);
+    	Service.put(pNum, project);
+    }else{
+    	HashMap<String, Session>themeTemp = proTemp.get(theme);
+    	if(themeTemp==null){
+        	HashMap<String, Session>Theme = new HashMap<String, Session>();
+           	Theme.put(this.nickname, this.session);
+        	proTemp.put(theme, Theme);
+        	Service.replace(pNum, proTemp);
+    	}else{
+    		System.out.println(this.nickname);
+    		System.out.println(themeTemp.get(this.nickname)+"너 어딨니");
+    		themeTemp.put(this.nickname, session);
+    		System.out.println(themeTemp.size()+"2번째");
+    		System.out.println(themeTemp.toString()+"second");
+    	}
+    }
 	}
-	this.nickname=usr;
-	sessionMap .put(this.nickname, session);
+    catch(ArrayIndexOutOfBoundsException e){
+    	
+    }finally {
+    	sessionMap .put(this.nickname, session);
+	}
 }
 
 
@@ -106,16 +144,19 @@ public void handleMessage(Session session, String message) throws IOException {
 	System.out.println(usrName);
 	String row = (String)jobj.get("row");
 	String col = (String)jobj.get("col");
-	System.out.println(row+" : "+col);
-			Iterator<Session> iterator = sessionUsers.iterator();
-			while(iterator.hasNext()) {
+	HashMap<String, Session> targets= (HashMap<String, Session>) Service.get(this.ProNum).get(this.Protheme);
+	Set<String> keyset = targets.keySet();
+	for(String key:keyset){
+		targets.get(key).getBasicRemote().
+        sendText(JSONConverter("index", row+":"+col));
+		System.out.println("One Two");
+		System.out.println(this.session);
+		System.out.println(targets.get(key));
+	}
 
-			iterator.next().getBasicRemote().
-                   sendText(JSONConverter("index", row+":"+col));
 
 		} 
 
-}
 
 private void sendToOne(String msg, Session ses) {
   	try {
