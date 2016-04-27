@@ -41,6 +41,7 @@ public class ProjectController {
 	@RequestMapping(value="gotoGroup", method=RequestMethod.GET)
 	public String gotoGroup(String proNum,HttpSession session ,Model model) {
 		model.addAttribute("theme", "open");
+		model.addAttribute("proNum", proNum);
 		session.setAttribute("proNum", proNum);//지민 모델에 넣는걸 세션에 넣는 걸로 바꿈
 		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
 		UserDao userDao = sqlSession.getMapper(UserDao.class);
@@ -66,22 +67,18 @@ public class ProjectController {
 	
 	@RequestMapping(value="deleteGroup",method=RequestMethod.POST)
 	public String deleteProject(String proNum){
-		System.out.println("delete");
 		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
 		int i = dao.deleteALLMember(proNum);
 		int k = dao.deleteALLTheme(proNum);
 		int y = dao.deleteProject(proNum);
-		System.out.println(i+k+y);
 		return "redirect:afterLogin";
 	}
 	@RequestMapping(value="deleteTheme",method=RequestMethod.POST)
 	public @ResponseBody List<Theme> deleteTheme(@RequestBody Map<String, Object>json){
 		String thmNum = (String) json.get("thmNum");
 		String proNum = (String) json.get("proNum");
-		System.out.println(thmNum);
 		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
 		dao.deleteTheme(thmNum);
-		System.out.println(json.toString());
 		List<Theme> themeList = dao.selectThemeList(proNum);
 		return themeList;
 	}	

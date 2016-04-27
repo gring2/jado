@@ -1,7 +1,7 @@
 body {
 	margin:0;
 	padding:0;
-	background:#ccc;
+	background:white;
 	font:14px/1.5 "Helvetica Neue", Helvetica, Arial, san-serif;
 }
 article, footer, header { display: block; }

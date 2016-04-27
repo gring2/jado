@@ -35,6 +35,9 @@
 .txtcenter {
 	text-align: center;
 }
+iframe{
+border: 0;
+}
 </style>
 
 <!-- <a href="#" id="prompt">Prompt Dialog</a><br> -->
@@ -258,7 +261,7 @@ $(function() {
                       </div>
                   </div>
                   <!-- iframe -->
-                      <div class="col-md-4" style="border: 1px, solid, black; width: 30% ; height: 850px; position: right; right: 0;">
+                      <div class="col-md-4" style=" width: 30% ; height: 850px; position: right; right: 0;">
 	                       <iframe name="right_up" width="100%" height="60%" src="zombie?usr=${sessionScope.loginName }" style="border: 1px, solid, black;" >
 	                       </iframe>
 	

@@ -19,6 +19,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.ibatis.session.SqlSession;
 import org.scit.app.persistence.ChatDao;
 import org.scit.app.persistence.ProjectDao;
@@ -64,7 +65,6 @@ public class HomeController {
 	
 	@RequestMapping(value = "chat", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
 		return "ChatRoom";
 	}
 	@RequestMapping(value = "zombie", method = RequestMethod.GET)
@@ -82,11 +82,113 @@ public class HomeController {
 		return "calendar";
 	}
 	@RequestMapping(value = "chatbox", method = RequestMethod.GET)
-	public String chatbox(Locale locale, Model model) {		
+	public String chatbox(Locale locale, Model model) {
+		
 		return "chatbox";
 	}
 
-	//////////////지민:간트 관련된 메소드 모두 교체
+
+	@RequestMapping(value="openMessanger", method = RequestMethod.GET)
+	public String openMessanger(HttpSession session, Model model){
+		User vo = (User) session.getAttribute("user");
+		model.addAttribute("userId", vo.getId());
+		return "openMessanger";
+	}
+	@RequestMapping(value="sendMsg", method = RequestMethod.POST)
+	public String sendMsg(Model model, Message msg){
+		ChatDao dao = sqlSession.getMapper(ChatDao.class);
+		dao.insertMessage(msg);
+		model.addAttribute("success", "suceess");
+		return "openMessanger";
+	}
+
+	@RequestMapping(value="reply", method = RequestMethod.GET)
+	public String reply(String sender, String receiver, Model model){
+		model.addAttribute("sender", sender);
+		model.addAttribute("receiver", receiver);
+		return "reply";
+	}
+	
+
+	@RequestMapping(value="hangout", method=RequestMethod.GET)
+	public String hangout(){
+		return "hangout";
+	}
+	@RequestMapping(value="storage", method=RequestMethod.GET)
+	public String storage(String proNum, Model model){
+		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
+		List<Theme> themeList = dao.selectThemeList(proNum);
+		model.addAttribute("themeList", themeList);
+		return "storage";
+	}
+	@RequestMapping(value="saveFile", method=RequestMethod.POST)
+	public String moveReg(Storage storage, String proNum, String thmNum, HttpServletRequest request) throws IOException{
+		MultipartFile file = storage.getFile();
+		if(!file.isEmpty()){
+			String originalFile = file.getOriginalFilename();
+			storage.setFileName(originalFile);
+			String savedFile=storage.getThmNum()+"_"+originalFile;
+			String realPath = request.getServletContext().getRealPath("/upload");
+			storage.setRealPath(realPath);
+			String fPath = realPath+"\\"+savedFile;
+			FileOutputStream fs = new FileOutputStream(fPath);
+			fs.write(storage.getFile().getBytes());
+			fs.close();
+			
+		}
+		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
+		dao.insertStorage(storage);
+		String redirect = "redirect:storage?proNum="+proNum;
+		
+		return redirect;
+		
+	}
+	
+	
+	
+	
+	@RequestMapping(value="download", method=RequestMethod.GET)
+	public void download(HttpServletRequest request,String fileName,HttpServletResponse response) throws UnsupportedEncodingException, IOException{
+			System.out.println(fileName);
+			//response header 수정
+			String fname = new String(fileName.getBytes("ISO8859-1"),"UTF-8");
+			response.setHeader("Content-Disposition", "attachment;filename="+new String(fname.getBytes(),"ISO8859-1"));
+			String fullPath = request.getServletContext().getRealPath("\\upload")+"\\"+fname;
+			System.out.println(fullPath);
+			FileInputStream fin = new FileInputStream(fullPath );
+			ServletOutputStream sout = response.getOutputStream();
+			byte[] buffer = new byte[1024];
+			
+			int size=0;
+			
+			while((size = fin.read(buffer,0,buffer.length))!=-1){
+				sout.write(buffer,0,size);
+			}
+			fin.close();sout.close();
+	}
+	
+	
+	@RequestMapping(value="viewBook", method = RequestMethod.GET)
+	public String viewBook(String thmNum,String chatDate,HttpSession session,Model model){
+		ProjectDao prodao = sqlSession.getMapper(ProjectDao.class);
+		Map<String,String> keyword = new HashMap<String, String>();
+		keyword.put("thmNum", thmNum); keyword.put("chatDate", chatDate);
+		List<Chat> book = prodao.viewBook(keyword);
+		model.addAttribute("meetingBook", book);
+		return "viewBook";
+	}
+	
+	
+
+	@RequestMapping(value="notice", method=RequestMethod.GET)
+	public String notice(Model model, String proNum){
+		int x=0;
+		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
+		
+		List<Notice>noticeList=dao.viewNotice(proNum);
+		model.addAttribute("noticeList", noticeList);
+		return "notify";
+	}
 	@RequestMapping(value="gantchartView",method=RequestMethod.GET)
 	public String gantchartView(Model model, HttpSession session){
 		ProjectDao dao=sqlSession.getMapper(ProjectDao.class);
@@ -165,127 +267,5 @@ public class HomeController {
 		return "gantchartViewMember";			
 	}
 	
-	////////////여기까지
-
-	@RequestMapping(value="openMessanger", method = RequestMethod.GET)
-	public String openMessanger(HttpSession session, Model model){
-		User vo = (User) session.getAttribute("user");
-		model.addAttribute("userId", vo.getId());
-		System.out.println(vo.toString());
-		return "openMessanger";
-	}
-	@RequestMapping(value="sendMsg", method = RequestMethod.POST)
-	public String sendMsg(Model model, Message msg){
-		System.out.println(msg);
-		ChatDao dao = sqlSession.getMapper(ChatDao.class);
-		dao.insertMessage(msg);
-		model.addAttribute("success", "suceess");
-		return "openMessanger";
-	}
-
-	@RequestMapping(value="reply", method = RequestMethod.GET)
-	public String reply(String sender, String receiver, Model model){
-		System.out.println(sender+" : "+receiver);
-		model.addAttribute("sender", sender);
-		model.addAttribute("receiver", receiver);
-		return "reply";
-	}
 	
-
-	@RequestMapping(value="hangout", method=RequestMethod.GET)
-	public String hangout(){
-		return "hangout";
-	}
-	@RequestMapping(value="storage", method=RequestMethod.GET)
-	public String storage(String proNum, Model model){
-		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
-		List<Theme> themeList = dao.selectThemeList(proNum);
-		model.addAttribute("themeList", themeList);
-		return "storage";
-	}
-	@RequestMapping(value="saveFile", method=RequestMethod.POST)
-	public String moveReg(Storage storage,String proNum, HttpServletRequest request) throws IOException{
-		MultipartFile file = storage.getFile();
-		if(!file.isEmpty()){
-			String originalFile = file.getOriginalFilename();
-			storage.setFileName(originalFile);
-			String savedFile=storage.getThmNum()+
-					"_"+originalFile;
-			//deployed 경로 알아오기
-			String realPath = request.getServletContext().getRealPath("/upload");
-			String fPath = realPath+"\\"+savedFile;
-			System.out.println(savedFile);
-			System.out.println(originalFile);
-			FileOutputStream fs = new FileOutputStream(fPath);
-			fs.write(storage.getFile().getBytes());
-			fs.close();
-		}
-		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
-		dao.insertStorage(storage);
-		String redirect = "redirect:storage?proNum="+proNum;
-		return redirect;
-		
-	}
-	
-	
-	
-	
-	@RequestMapping(value="download", method=RequestMethod.GET)
-	public void download(HttpServletRequest request,String fileName,HttpServletResponse response) throws UnsupportedEncodingException, IOException{
-			System.out.println(fileName);
-			//response header 수정
-			String fname = new String(fileName.getBytes("ISO8859-1"),"UTF-8");
-			response.setHeader("Content-Disposition", "attachment;filename="+new String(fname.getBytes(),"ISO8859-1"));
-			String fullPath = request.getServletContext().getRealPath("\\upload")+"\\"+fname;
-			System.out.println(fullPath);
-			FileInputStream fin = new FileInputStream(fullPath );
-			ServletOutputStream sout = response.getOutputStream();
-			byte[] buffer = new byte[1024];
-			
-			int size=0;
-			
-			while((size = fin.read(buffer,0,buffer.length))!=-1){
-				sout.write(buffer,0,size);
-			}
-			fin.close();sout.close();
-	}
-	
-	
-	@RequestMapping(value="viewBook", method = RequestMethod.GET)
-	public String viewBook(String thmNum,String chatDate,HttpSession session,Model model){
-		ProjectDao prodao = sqlSession.getMapper(ProjectDao.class);
-		Map<String,String> keyword = new HashMap<String, String>();
-		keyword.put("thmNum", thmNum); keyword.put("chatDate", chatDate);
-		System.out.println(keyword.toString());
-		List<Chat> book = prodao.viewBook(keyword);
-		System.out.println(book.toString());
-		model.addAttribute("meetingBook", book);
-		return "viewBook";
-	}
-	
-	
-	@RequestMapping(value="ajaxdownload", method=RequestMethod.GET)
-	public void ajaxdownload(HttpServletRequest request,String filename,HttpServletResponse response) throws UnsupportedEncodingException, IOException{
-			//response header ?섏젙
-			String fname = new String(filename.getBytes("ISO8859-1"),"UTF-8");
-			response.setHeader("Content-Disposition", "attachment;filename="+new String(fname.getBytes(),"ISO8859-1"));
-			String fullPath = request.getServletContext().getRealPath("\\transfer")+"\\"+fname;
-			FileInputStream fin = new FileInputStream(fullPath );
-			ServletOutputStream sout = response.getOutputStream();
-			byte[] buffer = new byte[1024];
-			int size=0;
-			while((size = fin.read(buffer,0,buffer.length))!=-1){
-				sout.write(buffer,0,size);
-			}
-			fin.close();sout.close();
-	}
-	@RequestMapping(value="notice", method=RequestMethod.GET)
-	public String notice(Model model, String proNum){
-		int x=0;
-		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
-		
-		List<Notice>noticeList=dao.viewNotice(proNum);
-		model.addAttribute("noticeList", noticeList);
-		return "notify";
-	}
 }

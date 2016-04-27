@@ -4,9 +4,8 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.scit.app.persistence.ChatDao">
 <insert id="insertRecord" parameterType="Chat">
-	insert into jado_chat(chatNum,content,chatDate,memNum,thmNum,chatType) 
-	values('C'||to_char(lpad(seq_cht.nextval, 9, '0')),#{content},sysdate,
-	(select memNum from jado_member where userNum = #{userNum} and proNum = #{proNum}),
+	insert into jado_chat(content,chatDate,id,thmNum,chatType) 
+	values(#{content},sysdate, #{id},
 	#{thmNum}, #{chatType})
 </insert>
 <insert id="insertscrap" parameterType="Scrap">

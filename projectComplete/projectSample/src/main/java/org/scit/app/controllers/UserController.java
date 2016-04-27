@@ -73,7 +73,6 @@ public class UserController {
 	@RequestMapping(value="afterLogin", method=RequestMethod.GET)
 	public String afterLogin(HttpSession session,String userNum, Model model) {
 		User vo = (User) session.getAttribute("user");
-		System.out.println(vo.toString());
 		List<Project>proResult =  new UserController().selectProjectList(sqlSession,vo.getUserNum());
 		model.addAttribute("pList", proResult);
 		return "afterLogin";

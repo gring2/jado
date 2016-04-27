@@ -21,7 +21,16 @@
 <link href="resources/asset/css/style.css" rel="stylesheet">
 <!-- end: Css -->
 
-<link rel="shortcut icon" href="resources/asset/img/logomi.png">
+<style type="text/css">
+body  {
+    background-image: url(resources/img/main2.png);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 100% 80%;
+}
+</style>
+
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -29,19 +38,13 @@
     <![endif]-->
   </head>
 
-  <body id="mimin" class="dashboard form-signin-wrapper">
+  <body >
 
-    <div class="container">
+    <div class="container" style="margin: auto; padding-top: 250px;">
 
       <form class="form-signin" action="login" method="post">
         <div class="panel periodic-login">
-            <span class="atomic-number">28</span>
             <div class="panel-body text-center">
-                <h1 class="atomic-symbol">JA</h1>
-                <p class="atomic-mass">14.072110</p>
-                <p class="element-name">JADo</p>
-
-                <i class="icons icon-arrow-down"></i>
                 <div class="form-group form-animate-text" style="margin-top:40px !important;">
                   <input type="text" name="id" id="userid" class="form-text" required>
                   <span class="bar"></span>

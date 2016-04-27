@@ -25,49 +25,13 @@
 	<insert id="insertMember" parameterType="HashMap">
 	insert into jado_member (userNum,proNum,memNum,agreed)
 	values (
-	#{userNum},#{proNum}, concat(#{userNum},#{proNum}),'N')
+	#{userNum},#{proNum}, concat(#{userNum},#{proNum}),'Y')
 	</insert>
 	
 	<select id="selectUserList" parameterType="String" resultType="User">
-	select * from jado_user where userNum in (select userNum from jado_member where proNum=#{proNum} and agreed='Y')
+	select * from jado_user where userNum in (select userNum from jado_member where proNum=#{proNum} )
 	</select> 
 	
-	<insert id="insertGantchart" parameterType="Gantchart">
-	insert into jado_gantchart values(#{gantNum},#{proNum},#{todo})
-	</insert> 
-	<insert id="insertGantMember" parameterType="GantMember">
-	insert into jado_gantmember (userNum,gantNum) values(#{userNum},#{gantNum})
-	</insert> 	
-	<delete id="deleteGantchart" parameterType="String">
-	delete from jado_gantchart where gantNum=#{gantNum}	
-	</delete>
-	<delete id="deleteGantMember" parameterType="GantMember">
-	delete from jado_gantmember where gantNum=#{gantNum} and userNum=#{userNum}
-	</delete>
-	<update id="updateGantMember" parameterType="GantMember">
-		update jado_gantmember set startdate=#{startDate},endDate=#{endDate},duration=#{duration}
-		where gantNum=#{gantNum} and userNum=#{userNum}
-	</update>
-	<update id="updategantPercent" parameterType="GantMember"><!-- 지민:추가 -->
-		update jado_gantmember set gantPercent=#{gantPercent}
-		where gantNum=#{gantNum} and userNum=#{userNum}
-	</update>
-	
-	<select id="selectGantchart" parameterType="String" resultType="Gantchart">
-	select * from jado_gantchart where proNum=#{proNum}	order by gantNum
-	</select>
-	<select id="selectGantMember" parameterType="String" resultType="GantMember">
-	select 
-		jado_gantmember.userNum,
-		gantNum,
-		to_char(startdate,'yyyy-mm-dd') startdate,
-		to_char(enddate,'yyyy-mm-dd') enddate,
-		name, 
-		duration,
-		gantpercent
-		from jado_gantmember, jado_user
-		where gantNum=#{gantNum} and jado_gantmember.userNum=jado_user.userNum order by startdate
-	</select>
 	
 	
 	<select id="selectThemeList" parameterType="String" resultType="Theme">
@@ -91,7 +55,7 @@
 		select title from jado_project where proNum=#{proNum}
 	</select>
 	<insert id="insertStorage" parameterType="Storage">
-		insert into jado_storage(filename, thmNum) values(#{fileName},#{thmNum})
+		insert into jado_storage(filename, thmNum, realPath) values(#{fileName},#{thmNum},#{realPath})
 	</insert>
 	<select id="selectStorageList" parameterType="String" resultType="Storage">
 		select filename, thmNum from jado_storage where thmNum= #{thmNum}
@@ -100,7 +64,7 @@
  		select distinct to_char(chatdate,'yy/mm/dd hh') as chatDate, thmnum from jado_chat where thmnum =#{thmNum} and chatType='chat'
 	</select>
 	<select id="viewBook" parameterType="map" resultType="Chat">
-		select content from jado_chat where thmnum=#{thmNum} and to_date(to_char(chatdate,'yy/mm/dd hh'),'yy/mm/dd hh') = to_date(#{chatDate},'yy/mm/dd hh') and chatType='chat'
+		select id,content from jado_chat where thmnum=#{thmNum} and to_date(to_char(chatdate,'yy/mm/dd hh'),'yy/mm/dd hh') = to_date(#{chatDate},'yy/mm/dd hh') and chatType='chat'
 	</select>
 	<insert id="noticeReg" parameterType="map">
 		insert into jado_notice(id, content, noticeDate, proNum)
@@ -120,4 +84,51 @@
 		and to_date(to_char(noticedate,'yy/mm/dd hh:mm:ss'),'yy/mm/dd hh:mm:ss') = to_date(#{noticeDate},'yy/mm/dd hh:mm:ss')
 		and id= #{id}
 	</delete>
+	
+		<select id="selectStorage" parameterType="string" resultType="Storage">
+		select * from jado_storage where fileName = #{fileName}
+	</select>
+	
+	<delete id="deleteStorage" parameterType="string">
+		delete from jado_storage where fileName = #{fileName}
+	</delete>
+	
+	
+		<insert id="insertGantchart" parameterType="Gantchart">
+	insert into jado_gantchart values(#{gantNum},#{proNum},#{todo})
+	</insert> 
+	<insert id="insertGantMember" parameterType="GantMember">
+	insert into jado_gantmember (userNum,gantNum) values(#{userNum},#{gantNum})
+	</insert> 	
+	<delete id="deleteGantchart" parameterType="String">
+	delete from jado_gantchart where gantNum=#{gantNum}	
+	</delete>
+	<delete id="deleteGantMember" parameterType="GantMember">
+	delete from jado_gantmember where gantNum=#{gantNum} and userNum=#{userNum}
+	</delete>
+	<update id="updateGantMember" parameterType="GantMember">
+		update jado_gantmember set startdate=#{startDate},endDate=#{endDate},duration=#{duration}
+		where gantNum=#{gantNum} and userNum=#{userNum}
+	</update>
+	<update id="updategantPercent" parameterType="GantMember">
+		update jado_gantmember set gantPercent=#{gantPercent}
+		where gantNum=#{gantNum} and userNum=#{userNum}
+	</update>
+	
+	<select id="selectGantchart" parameterType="String" resultType="Gantchart">
+	select * from jado_gantchart where proNum=#{proNum}	order by gantNum
+	</select>
+	<select id="selectGantMember" parameterType="String" resultType="GantMember">
+	select 
+		jado_gantmember.userNum,
+		gantNum,
+		to_char(startdate,'yyyy-mm-dd') startdate,
+		to_char(enddate,'yyyy-mm-dd') enddate,
+		name, 
+		duration,
+		gantpercent
+		from jado_gantmember, jado_user
+		where gantNum=#{gantNum} and jado_gantmember.userNum=jado_user.userNum order by startdate
+	</select>
+	
 </mapper>   

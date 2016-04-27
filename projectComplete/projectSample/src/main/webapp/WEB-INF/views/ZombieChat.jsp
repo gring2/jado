@@ -3,9 +3,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
+  <!-- start: Css -->
+  <link rel="stylesheet" type="text/css" href="resources/asset/css/bootstrap.min.css">
+
+  <!-- plugins -->
+  <link rel="stylesheet" type="text/css" href="resources/asset/css/plugins/font-awesome.min.css"/>
+  <link rel="stylesheet" type="text/css" href="resources/asset/css/plugins/simple-line-icons.css"/>
+  <link rel="stylesheet" type="text/css" href="resources/asset/css/plugins/animate.min.css"/>
+  <link href="resources/asset/css/zombieStyle.css" rel="stylesheet">
+  <!-- end: Css -->
+  
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="resources/themes/alertify.min.js"></script>
 <head>
 	<meta charset="UTF-8">
-<style type="text/css">
+<!-- <style type="text/css">
     html, body { height:100%; overflow:hidden }
     #result {height:90%; width: 99%; overflow:auto;}
     #scrap{height:10%;width: 90%; text-align:center; font-size:30px; color:white; text-shadow: 2px 2px gray; font-weight: bold; cursor:pointer;
@@ -26,7 +38,37 @@
     .wrap{
     	border: 0.5px solid gray;
     }
+</style> -->
+
+<style type="text/css">
+html {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+}
+
+#result {
+	width: 100%;
+	height: 100%;
+	overflow:auto;
+	padding: 0px;
+	margin: 0px;
+}
+
+.wrapper {
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+.getScrap{
+	cursor: pointer;
+}
 </style>
+
 <title>WebSocket Client</title>
 <link rel="stylesheet" href="resources/stickies/stickies.css" />
 <link rel="stylesheet" href="resources/css/default.css" />
@@ -79,7 +121,15 @@ $(function(){
 				,success:function(response){
 					var content = response.content
 					$('#result').val(content)
-				},error:function(response){
+						if($('#dropopen').hasClass('open')) {
+							$('#dropopen').removeClass('open');
+							$('#listdown').attr('aria-expanded','false');
+							$('#icons:class').replaceWith('icons icon-options-vertical');
+						} else {
+							$('#dropopen').addClass('open');
+							$('#listdown').attr('aria-expanded','true');
+						}
+					},error:function(response){
 					
 				}	
 			})
@@ -108,7 +158,7 @@ $(function(){
 			})
 	
 	})
-	$('#btn').on('click',function(){
+	$('#icons').on('click',function(){
 		var dis = $('#scrapList').css('display');
 		var userNum = $('#userNum').val();
 		if(dis!='none'){
@@ -135,7 +185,7 @@ $(function(){
 				})
 			
 			$('#scrapList').css('display','none');
-		}else{
+		} else {
 			$('#scrapList').css('display','block');
 		}
 	})
@@ -143,7 +193,7 @@ $(function(){
 </script>
 </head>
 <body>
-<input type="hidden" id="userNum" value="${sessionScope.userNum }">
+<%-- <input type="hidden" id="userNum" value="${sessionScope.userNum }">
 <div class="wrap" style="">
 <div id="btn" class="btn">+</div> <div class="btn" id="scrap"> SCRAP IT</div>  
 	<div id="scrapList" style=" display:none; position: absolute; border: 1px; margin-top: 47px; background-color: white; z-index: 50">
@@ -151,6 +201,39 @@ $(function(){
 	</ul>
 	</div>
 </div>
-<textarea id="result" ></textarea>
+<textarea id="result" ></textarea> --%>
+
+<!-- Design -->
+<div class="wrapper" style="height: 6%;">
+	<input type="hidden" id="userNum" value="${sessionScope.userNum }">
+	<div style="width: 5%; height: 130%; margin: 0px; padding: 0px; float: left">
+		<div class="btn-group" role="group" id="dropopen" style="height:100%;">
+			<div class="btn dropdown-toggle" id="listdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #2196F3; color: white; padding: 14px 14px; width: 100%; height: 100%; border-right: #B5B5B5 3px solid;">
+	        <span class="icons icon-menu" id="icons" style="font-size: 20px; font-style: bold;"></span>
+	        </div>
+	        <ul class="dropdown-menu" id="Sclist" style="border: solid 1px black;">
+	        </ul>
+        </div>
+	</div>
+	<div style="width: 95%; height: 130%; margin: 0px; padding: 0px; float: left">
+		<div class="btn" id="scrap" style="margin: 0px; width: 100%; height: 100%; font-size: 30px; background-color: #2196F3; color: white; font-weight: bold; line-height: 125% " > SCRAP IT</div>
+	</div>
+</div>
+<div class="wrapper" style="height: 94%;">
+	<textarea id="result" style="height: 100%; border: white; padding: 0px;"></textarea>
+</div>
+<!-- End Design -->
 </body>
+<script type="text/javascript">
+	$('#listdown').on('click', function() {
+		if($('#dropopen').hasClass('open')) {
+			$('#dropopen').removeClass('open');
+			$('#listdown').attr('aria-expanded','false');
+			$('#icons:class').replaceWith('icons icon-options-vertical');
+		} else {
+			$('#dropopen').addClass('open');
+			$('#listdown').attr('aria-expanded','true');
+		}
+	});
+</script>
 </html>

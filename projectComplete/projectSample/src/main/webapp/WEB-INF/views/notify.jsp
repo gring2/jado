@@ -24,7 +24,7 @@
     padding: 10px;
     border-radius: 5px;
     margin: 10px;
-    height: 60px;
+    height: 45px;
 	}
 	.content{
 		margin-top: 20px;
@@ -47,8 +47,8 @@
 </style>
 </head>
 <body>
-	<div id="container">
-		<div id="board" style="width: 90%;margin: 0 auto 0 auto; padding: 20px 10px 20px 10px; border-radius: 5px; background-color: white;">
+	<div id="container" style="height:100%;width: 100%;">
+		<div id="board" style="width: 98%; height:80%;margin: 0 auto 0 auto; padding: 10px 10px 10px 10px; border-radius: 5px; background-color: white;">
 			<c:forEach var="notice" items="${noticeList }">
 				<div class="feed"><div class='id'>${ notice.id}
 				<span class='date'>${ notice.noticeDate}</span>
@@ -58,7 +58,7 @@
 				</div>
 			</c:forEach>
 		</div>
-		<div style="width: 92%;margin: 10 auto 0 auto; border-radius: 5px; background-color: white;"">
+		<div style="width: 100%;margin: 10 auto 0 auto; border-radius: 5px; background-color: white;"">
 		<input type="text" class ="feeding"id="content">
 		<input type="button" class ="feedbutton" id="posting" value="등록">	
 		</div>

@@ -241,12 +241,12 @@
 <script type="text/javascript">
         //WebSocketEx는 프로젝트 이름
         //websocket 클래스 이름
-        var url = window.location.href;//http://localhost:7070/app/gantchartView?usr  asdf&Pnum P000000001&Theme T000000001&title
+        var url = window.location.href;
 		var arr = url.split("=")
 		var nickname= arr[1]
 		var proNum = (arr[2].split("="))[0]
 		var theme = (arr[3].split("&"))[0]        
-	    var webSocket = new WebSocket("ws://localhost:7070/app/gantSocket?usr="+nickname+"&Pnum="+proNum+"&Theme="+theme);
+	    var webSocket = new WebSocket("ws://203.233.196.76:8666/app/gantSocket?usr="+nickname+"&Pnum="+proNum+"&Theme="+theme);
         //웹 소켓이 연결되었을 때 호출되는 이벤트
         webSocket.onopen = function(message){
             alert("접속")

@@ -6,6 +6,7 @@ var STICKIES = (function () {
 			click : function () { createSticky(); }
 		}).prependTo(document.body);
 		initStickies = null;
+		alert(typeof document.getElementsByClassName('add-sticky'))
 	},
 	openStickies = function openStickies() {
 		initStickies && initStickies();

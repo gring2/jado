@@ -34,7 +34,8 @@ public interface ProjectDao {
 	public List<Theme> selectThemeList(String proNum);
 	public List<Chat> selectChatList(Map<String,String> keyword);
 	public void insertStorage(Storage storage);	
-	public List<Storage> selectStorageList(String proNum);		
+	public List<Storage> selectStorageList(String proNum);	
+	
 	public List<Meeting> selectMeetingList(String proNum);
 	public void insertLeader(String userNum);
 	public String selectProject(String group);
@@ -43,6 +44,8 @@ public interface ProjectDao {
 	public void noticeReg(Map<String, String> keyword);
 	public List<Notice> viewNotice(String proNum);
 	public int deleteNotice(Notice notice);
+	public Storage selectStorage(String fileName);
+	public int deleteStorage(String fileName);
 	
 	public void insertGantchart(Gantchart gantchart);	
 	public void deleteGantchart(String gantNum);	

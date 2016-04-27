@@ -1,13 +1,18 @@
 package org.scit.app.controllers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
@@ -36,7 +41,6 @@ public class AjaxController {
 	SqlSession sqlSession;
 	@RequestMapping(value="record", method = RequestMethod.POST)
 	public @ResponseBody void reCord(@RequestBody Map<String, Object> json, HttpSession session){
-		String sender =  (String) json.get("sender");
 		String content =  (String) json.get("content");
 		String proNum =  (String) json.get("proNum");
 		String thmNum =  (String) json.get("thmNum");
@@ -44,15 +48,11 @@ public class AjaxController {
 		Chat chat = new Chat();
 		chat.setContent(content);
 		User vo = (User) session.getAttribute("user");
-		System.out.println(session.toString());
-		System.out.println(vo.toString());
-		chat.setUserNum(vo.getUserNum());
-		chat.setProNum(proNum);
+		chat.setId(vo.getId());
 		chat.setThmNum(thmNum);
 		chat.setChatType("chat");
 		System.out.println(chat.toString());
-		
-				dao.insertRecord(chat);
+		dao.insertRecord(chat);
 	}
 	
 	@RequestMapping(value="scrap", method = RequestMethod.POST)
@@ -128,12 +128,11 @@ public class AjaxController {
 		Map<String, String>keyword = new HashMap<String, String>();
 		keyword.put("proNum",proNum);
 		keyword.put("userNum", vo.getUserNum());
-		System.out.println(keyword.toString());
+		System.out.println(keyword.toString()+"정보");
 		if(isinvate==true){
 			proDao.insertMember(keyword);
 		}
 		String receiver = vo.getId();
-		System.out.println(vo.toString());
 		keyword.put("receiver", receiver);
 		chatDao.deleteInvite(keyword);
 		
@@ -141,10 +140,8 @@ public class AjaxController {
 	
 	@RequestMapping(value="getStgList", method = RequestMethod.POST)
 	public@ResponseBody List<Storage> getStgList(@RequestBody Map<String, Object> json,HttpSession session){
-		System.out.println(json.get("thmNum").toString());
 		ProjectDao prodao = sqlSession.getMapper(ProjectDao.class);
 		List<Storage> stgList = prodao.selectStorageList((String) json.get("thmNum"));
-		System.out.println(stgList.toString());
 		return stgList;
 	}
 	
@@ -169,11 +166,26 @@ public class AjaxController {
 			String fPath = realPath+"\\"+name ;
 			FileOutputStream f = new FileOutputStream(new File(fPath));
 			f.write(multiFile.getBytes());
+			System.out.println(multiFile.getBytes());
 		}
 		return name;
 	}
 	
-	
+	@RequestMapping(value="ajaxdownload", method=RequestMethod.GET)
+	public void ajaxdownload(HttpServletRequest request,String filename,HttpServletResponse response) throws UnsupportedEncodingException, IOException{
+			//response header ?섏젙
+			String fname = new String(filename.getBytes("ISO8859-1"),"UTF-8");
+			response.setHeader("Content-Disposition", "attachment;filename="+new String(fname.getBytes(),"ISO8859-1"));
+			String fullPath = request.getServletContext().getRealPath("\\transfer")+"\\"+fname;
+			FileInputStream fin = new FileInputStream(fullPath );
+			ServletOutputStream sout = response.getOutputStream();
+			byte[] buffer = new byte[1024];
+			int size=0;
+			while((size = fin.read(buffer,0,buffer.length))!=-1){
+				sout.write(buffer,0,size);
+			}
+			fin.close();sout.close();
+	}
 	@RequestMapping(value="noticeReg", method = RequestMethod.POST)
 	public @ResponseBody List<Notice>noticeReg(@RequestBody Map<String, Object> json,HttpSession session){
 		String proNum = (String) json.get("proNum");
@@ -188,5 +200,22 @@ public class AjaxController {
 		dao.noticeReg(keyword);
 		return dao.viewNotice(proNum);
 	}
+	
+	@RequestMapping(value="deleteFile", method = RequestMethod.POST)
+	public @ResponseBody List<Storage> deleteFile(@RequestBody Map<String, Object> json, Storage storage) throws IOException{
+		String fileName = (String) json.get("fileName");
+		ProjectDao dao = sqlSession.getMapper(ProjectDao.class);
+		storage = dao.selectStorage(fileName);
+		int result = dao.deleteStorage(fileName);
+		if(result == 1) {
+			File dFile = new File(storage.getRealPath() + "\\" + storage.getFileName());
+			dFile.delete();
+		}
+		
+		ProjectDao prodao = sqlSession.getMapper(ProjectDao.class);
+		List<Storage> stgList = prodao.selectStorageList(storage.getThmNum());
+		return stgList;
+	}
+	
 	
 }

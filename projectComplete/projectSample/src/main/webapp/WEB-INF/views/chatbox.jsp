@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -11,6 +11,7 @@
 	<meta name="keyword" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chatting Room</title>
+
 
   <!-- start: Css -->
   <link rel="stylesheet" type="text/css" href="resources/asset/css/bootstrap.min.css">
@@ -196,6 +197,7 @@ function pushNoti(data){
        Notify.requestPermission(onPermissionGranted, onPermissionDenied);
    }    
 }
+
 //WebSocket Api
 var url = window.location.href;
 	var arr = url.split("=")
@@ -205,9 +207,10 @@ var swap ;
 var proNum = arr[1]
 proNum=proNum.split("&")[0];
 var theme = arr[2];
+
 function connect() {
   // 아래의 적색 경로는 서버측의 ServerEndPoint 를 사용해야 하고 ? 표시 오른쪽에는 파라미터가 온다
-		  var target = "ws://localhost:7070/app/echo?usr="+nickname+"&Pnum="+proNum+"&Theme="+theme; //서버에서 파라미터를 
+		  var target = "ws://203.233.196.76:8666/app/echo?usr="+nickname+"&Pnum="+proNum+"&Theme="+theme; //서버에서 파라미터를 
 if ('WebSocket' in window) {
      ws = new WebSocket(target);
      var x =arr[3];
@@ -218,6 +221,7 @@ if ('WebSocket' in window) {
  } else {
      return;
  }
+		  
  ws.onopen = function () {
 	 document.getElementById('chat').onkeydown = function(event) {
 		 if (event.keyCode == 13) {
@@ -243,11 +247,13 @@ if ('WebSocket' in window) {
 	 alert(swap)
  }
  ws.onmessage = function (event) {
+	 alert(event.data.match(/#cal/))
 	 if(event.data.match(/#cal/)){
 			$("#result").append("<a href ='javascript:openCal()''>일정잡기"+'</a><br />')
 	 }else if(event.data.match(/#gant/)){//지민:간트 관련 추가
 			$("#result").append("<a href ='javascript:openGant()''>공정도"+'</a><br />')
-	 }else{
+			}
+	 else{
 		 var data = event.data.split(":")
 		 var sender = data[1].split(",");
 		 var content = data[3].substr(0,data[3].length-2);
@@ -346,7 +352,6 @@ function openGant(){//지민:간트 관련 추가
 	var popOption = "width=2000, height=800, resizable=no, scrollbars=no, status=no;";    //팝업창 옵션(optoin)
 		window.open(popUrl,"",popOption);
 }
-
 
 </script>     
 </head>

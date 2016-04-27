@@ -169,12 +169,12 @@
   	
   </script>
 </head>
-<body style="background-color: #fff; overflow-y: auto; overflow-x: auto;" class="unselectable" unselectable="on">
+<body style="background-color: #fff; overflow-y: hidden; overflow-x: auto;" class="unselectable" unselectable="on">
 <input type="hidden" id="proNum" value=${proNum}>
 
 
 <!-- 공정도 표 -->
-<div id="workSpace" style="padding: 0px; overflow-y: auto; overflow-x: hidden; border: 1px solid rgb(229, 229, 229); position: relative; margin: 0px 5px; width: 1900px; height: 847px;">
+<div id="workSpace" style="padding: 0px; overflow-y: auto; overflow-x: auto; border: 1px solid rgb(229, 229, 229); position: relative; margin: 0px 5px; width: 1900px; height: 847px;">
 <div class="splitterContainer">
 <div class="splitElement splitBox1" style="width: 580px; left: 0px;">
 <div class="gdfWrapper">

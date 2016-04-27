@@ -265,7 +265,6 @@ var target = "ws://203.233.196.76:8666/app/cal?usr="+nickname+"&Pnum=One&Theme=D
  
  };
 }
-
 function send(row, col) {// JSON 문자열을 서버로 전송한다
 	var msg = {
 			"usrName":"nickname", "row":row.toString(), "col":col.toString()

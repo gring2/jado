@@ -31,9 +31,6 @@ import org.springframework.stereotype.Controller;
 @ServerEndpoint("/cal")
 @Controller
 public class CalServer {
-	@Autowired
-	SqlSession sqlSession;
-static Set<Session> sessionUsers = Collections.synchronizedSet(new HashSet<Session>());
 private String nickname;
 private String ProNum;
 private String Protheme;
@@ -65,8 +62,6 @@ private static final HashMap<String, Session> sessionMap = new HashMap();
 @OnOpen
 
 public void handleOpen(Session userSession) {
-	System.out.println("In calendar");
-	sessionUsers.add(userSession);
     this.session = userSession;
     String[] params = session.getQueryString().split("&");
     String usr = params[0].split("=")[1];
@@ -81,7 +76,6 @@ public void handleOpen(Session userSession) {
    
     this.ProNum=pNum;
     this.Protheme=theme;
-    System.out.println(this.nickname);
     HashMap<String, HashMap>proTemp = Service.get(pNum);
     if(proTemp==null){
     	HashMap<String, Session>Theme = new HashMap<String, Session>();
@@ -97,11 +91,7 @@ public void handleOpen(Session userSession) {
         	proTemp.put(theme, Theme);
         	Service.replace(pNum, proTemp);
     	}else{
-    		System.out.println(this.nickname);
-    		System.out.println(themeTemp.get(this.nickname)+"너 어딨니");
     		themeTemp.put(this.nickname, session);
-    		System.out.println(themeTemp.size()+"2번째");
-    		System.out.println(themeTemp.toString()+"second");
     	}
     }
 	}
@@ -133,15 +123,12 @@ public void handleOpen(Session userSession) {
 
 @OnError
 public void onError(Session session, Throwable thr)  {
-	System.out.println("dddd"+session.toString()+" : "+thr.toString());
-	sqlSession.getMapper(UserDao.class);
 	}
 @OnMessage
 
 public void handleMessage(Session session, String message) throws IOException {
 	JSONObject jobj = (JSONObject)JSONValue.parse(message);
 	String usrName = (String)jobj.get("usrName");
-	System.out.println(usrName);
 	String row = (String)jobj.get("row");
 	String col = (String)jobj.get("col");
 	HashMap<String, Session> targets= (HashMap<String, Session>) Service.get(this.ProNum).get(this.Protheme);
@@ -149,9 +136,6 @@ public void handleMessage(Session session, String message) throws IOException {
 	for(String key:keyset){
 		targets.get(key).getBasicRemote().
         sendText(JSONConverter("index", row+":"+col));
-		System.out.println("One Two");
-		System.out.println(this.session);
-		System.out.println(targets.get(key));
 	}
 
 
@@ -204,7 +188,6 @@ public void handleClose(Session session) {
  	this.nickname=usr;
  	sessionMap .put(this.nickname, session);
 
-	sessionUsers.remove(session);
 
 }
 

@@ -1,4 +1,4 @@
-﻿package org.scit.app.controllers;
+package org.scit.app.controllers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,13 +34,12 @@ import org.springframework.stereotype.Controller;
 
 @ServerEndpoint("/echo")
 public class SocketServer {
-static Set<Session> sessionUsers = Collections.synchronizedSet(new HashSet<Session>());
-// 클라이언트가 새로 접속할 때마다 한개의 Session 객체가 생성된다.
-// Session 객체를 컬렉션에 보관하여 두고 해당 클라이언트에게 데이터를 전송할 때마다 사용한다
-private Session session;
 private String nickname;
 private String ProNum;
 private String Protheme;
+// 클라이언트가 새로 접속할 때마다 한개의 Session 객체가 생성된다.
+// Session 객체를 컬렉션에 보관하여 두고 해당 클라이언트에게 데이터를 전송할 때마다 사용한다
+private Session session;
 static FileOutputStream fos = null;
 private static final HashMap<String, HashMap> Service = new HashMap();
 private static final HashMap<String, Session> sessionMap = new HashMap();
@@ -68,7 +67,6 @@ private static final HashMap<String, Session> sessionMap = new HashMap();
 
 public void handleOpen(Session userSession) {
 	System.out.println(userSession.toString());
-	sessionUsers.add(userSession);
     this.session = userSession;
     String[] params = session.getQueryString().split("&");
     String usr = params[0].split("=")[1];
@@ -140,14 +138,11 @@ public void handleMessage(Session session, String message) throws IOException {
 	String way = (String)jobj.get("way");
 	String content = (String)jobj.get("content");
 		if(way==null){
-			System.out.println("way is null");
-			System.out.println(sessionMap.get(this.nickname+"zombie"));
 			sendToOne(usrName, sessionMap.get(this.nickname+"zombie"));
-		}else if(way.equals("chat")||way.equals("cal")||way.equals("gant")){/////지민 ||way.equals("gant")추가
+		}else if(way.equals("chat")||way.equals("cal")||way.equals("gant")){
 			HashMap<String, Session> targets= (HashMap<String, Session>) Service.get(this.ProNum).get(this.Protheme);
 			Set<String> keyset = targets.keySet();
 			for(String key:keyset){
-				System.out.println(targets.get(key)+"보내기");
 				targets.get(key).getBasicRemote().
                 sendText(JSONConverter('#'+way+":"+content, usrName));
 			}
@@ -199,13 +194,10 @@ private void sendToOne(String msg, Session ses) {
 @OnClose
 
 public void handleClose(Session session) {
-	System.out.println("inCLose"+session);
 	HashMap<String, Session> targets= (HashMap<String, Session>) Service.get(this.ProNum).get(this.Protheme);
 	targets.remove(this.nickname);
 	Service.get(this.ProNum).replace(this.Protheme, targets);
 	Session sesion = sessionMap .remove(this.nickname);
- 	System.out.println(sesion.toString());
-	sessionUsers.remove(session);
 
 }
 

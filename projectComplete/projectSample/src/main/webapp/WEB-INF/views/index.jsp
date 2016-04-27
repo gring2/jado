@@ -15,7 +15,79 @@
  
     <!-- start: Css -->
     <link rel="stylesheet" type="text/css" href="resources/asset/css/bootstrap.min.css">
-
+<!--sticky  -->
+<link rel="stylesheet" href="resources/stickies/stickies.css" />
+<link rel="stylesheet" href="resources/css/default.css" />
+   	 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+      <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+     <script src="resources/js/json2.js"></script>
+      <script type="text/javascript">
+      $(function(){
+    	  var STICKIES = (function () {
+    			var initStickies = function initStickies() {
+    				$("<div />", { 
+    					text : "+", 
+    					"class" : "add-sticky",
+    					click : function () { createSticky(); }
+    				}).prependTo(document.body);
+    				initStickies = null;
+    				alert(typeof document.getElementsByClassName('add-sticky'))
+    			},
+    			openStickies = function openStickies() {
+    				initStickies && initStickies();
+    				for (var i = 0; i < localStorage.length; i++) {
+    					createSticky(JSON.parse(localStorage.getItem(localStorage.key(i))));
+    				}
+    			},
+    			createSticky = function createSticky(data) {
+    				data = data || { id : +new Date(), top : "40px", left : "40px", text : "Note Here" }
+    				
+    				return $("<div />", { 
+    					"class" : "sticky",
+    					'id' : data.id
+    					 })
+    					.prepend($("<div />", { "class" : "sticky-header"} )
+    						.append($("<span />", { 
+    							"class" : "sticky-status" 
+    						}))
+    						.append($("<span />", { 
+    							"class" : "close-sticky", 
+    							text : "trash", 
+    							click : function () { deleteSticky($(this).parents(".sticky").attr("id")); }
+    						}))
+    					)
+    					.append($("<div />", { 
+    						html : data.text, 
+    						contentEditable : true, 
+    						"class" : "sticky-content"
+    		 			}))
+    				.draggable({ 
+    					handle : "div.sticky-header", 
+    					stack : ".sticky"
+    				 })
+    				.css({
+    					position: "absolute",
+    					"top" : data.top,
+    					"left": data.left
+    				})
+    				.appendTo(document.body);
+    			},
+    			deleteSticky = function deleteSticky(id) {
+    				localStorage.removeItem("sticky-" + id);
+    				$("#" + id).fadeOut(200, function () { $(this).remove(); });
+    			}
+    			return {
+    				open   : openStickies,
+    				init   : initStickies,
+    				"new"  : createSticky,
+    				remove : deleteSticky 
+    			};
+    		}());
+    	  STICKIES.open();
+      
+      })
+      
+      </script>
       <!-- plugins -->
       <link rel="stylesheet" type="text/css" href="resources/asset/css/plugins/font-awesome.min.css"/>
       <link rel="stylesheet" type="text/css" href="resources/asset/css/plugins/simple-line-icons.css"/>
@@ -37,7 +109,9 @@
 <meta name="viewport" content="width=device-width">
 
 <style>
-
+iframe{
+	border: 0;
+}
 .alertify-log-custom {
 	background: blue;
 }
@@ -61,12 +135,6 @@ $(function() {
 		var popOption = "width=600, height=600, resizable=no, scrollbars=no, status=no;";    //팝업창 옵션(optoin)
 			window.open(popUrl,"",popOption);
 	})
-	$('#gantChart').on('click',function(){// 지민:간트 관련 추가
-		var popUrl = "gantchartShowView"	//팝업창에 출력될 페이지 URL
-		var popOption = "width=1800, height=860, resizable=no, scrollbars=no, status=no;";    //팝업창 옵션(optoin)
-			window.open(popUrl,"",popOption);
-	})
-	
 	$('#wrapping').on('click','.join',function(){
 		var con = confirm('해당 프로젝트에 참여하시겠습니까?');
 			var proNum = $(this).attr('myvalue')
@@ -189,7 +257,7 @@ $(function() {
 		$('#center').css('display','block')
 		$('#center').css('height','100%')		
 		$('#notice').css('display','none')		
-		
+		$('#gantview').css('display','none')
 	})
 	$('.dashboard').on('click','.thmDeletor',function(event){
 		var xx = $(this).parent().parent();
@@ -293,18 +361,6 @@ $(function() {
                  <b>JADo</b>
                 </a>
 
-              <ul class="nav navbar-nav search-nav">
-                <li>
-                   <div class="search">
-                    <span class="fa fa-search icon-search" style="font-size:23px;"></span>
-                    <div class="form-group form-animate-text">
-                      <input type="text" class="form-text" required>
-                      <span class="bar"></span>
-                      <label class="label-search">Type anywhere to <b>Search</b> </label>
-                    </div>
-                  </div>
-                </li>
-              </ul>
 
               <ul class="nav navbar-nav navbar-right user-nav">
                 <%-- <c:if test="${loginName } != null">
@@ -407,53 +463,22 @@ $(function() {
 
   		
           <!-- start: content -->
-<!--                     <div class="col-md-12 padding-0">
-                        <div class="col-md-8 padding-0" style="border: 1px solid black;">
-                           <iframe name="center" id="center" src="http://localhost:8666/app/chat" style="width: 105% ; height: 1000px; ">
-	                            <div class="col-md-12" >
-	                                <div class="panel box-v4">
-	                                    <div class="panel-heading bg-white border-none">
-	                                      <h4><span class="icon-notebook icons"></span> Memo</h4>
-	                                    </div>
-	                                    <div class="panel-body padding-0">
-	                                        <div class="col-md-12 col-xs-12 col-md-12 padding-0 box-v4-alert">
-	                                            <h2>Checking Meeting Schedule!</h2>
-	                                            <p>Daily Check on Server status, mostly looking at servers with alerts/warnings</p>
-	                                            <b><span class="icon-clock icons"></span> Today at 15:00</b>
-	                                        </div>
-	                                        <div class="calendar">
-	                                        </div>
-	                                    </div>
-	                                </div> 
-	                            </div>
-                           </iframe>
-                        </div>
-                        <div class="col-md-4" style="width: 30% ; height: 850px; position: fixed; right: 0%" >
-	                            <iframe name="right_up" width="100%" height="60%" src="joinView.jsp" style="border: 0px;" >
-	                            </iframe>
-	
-								<iframe name="right_down" width="100%" height="40%" src="icons.html" style="border: 0px;" >
-	                            </iframe>
-	                    </div>
-                    </div> -->
            <div id="content">
                 <div class="col-md-12" style="padding:20px;">
                 <c:if test="${not empty sessionScope.loginName }">
-                   <div>${sessionScope.loginName }</div>
-                   <div class="col-md-12 padding-0" style="height:1000px">
+                   <div class="col-md-12 padding-0" id="cont"style="height:1000px">
                         
-                        <div class="col-md-8 padding-0" style="height: 100%">
-                           <iframe name="notice" id="notice" src="notice?proNum=${proNum }" style="width: 100% ; height: 50%; ">
+                        <div class="col-md-8 padding-0" style="height: 100%;vertical-align: middle;text-align:left; padding: 0 0 0 0;" >
+                           <iframe name="notice" id="notice" src="notice?proNum=${proNum }" style="width: 100% ; height: 50%;">
                            </iframe>
+                           <iframe name="gantview" id="gantview" src ="gantchartShowView" style="width:100%;height:50%;"></iframe>
                            <iframe name="center" id="center" src="chatbox?proNum=${proNum }&theme=${theme}" style="width: 100% ; height: 50%; display: none" >
                            </iframe>
                         </div>
                         <div class="col-md-4" style=" width: 30% ; height: 100%; position: right; right: 0;">
-	                            <iframe name="right_up" width="100%" height="60%" src="zombie?usr=${sessionScope.loginName }"  >
+	                            <iframe name="right_up" width="100%" height="100%" src="zombie?usr=${sessionScope.loginName }"  >
 	                            </iframe>
 	
-								<iframe name="right_down" width="100%" height="40%" src="sticky"  >
-	                            </iframe>
 	                    </div>
                     </div>
                 </c:if>
