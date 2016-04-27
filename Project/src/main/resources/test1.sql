@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 ﻿f
+=======
+>>>>>>> 153c0c53f7c628f3c545883860161b261952b119
 /* Drop Tables */
 
 DROP TABLE JADO_NOTICE CASCADE CONSTRAINTS;
@@ -120,8 +123,8 @@ CREATE TABLE JADO_USER
 (
 	USERNUM varchar2(10 char) NOT NULL,
 	ID varchar2(100 char) NOT NULL UNIQUE,
-	PASSWORD varchar2(100 char) NOT NULL,
-	NAME varchar2(20 char) NOT NULL,
+	PASSWORD varchar2(100 char) ,
+	NAME varchar2(20 char) ,
 	GOOGLEID varchar2(20 char),
 	CONSTRAINT SYS_C007571 PRIMARY KEY (USERNUM)
 );
@@ -227,6 +230,12 @@ insert into jado_user (userNum,id,password,name ,googleId)
 	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'zxcv','zxcv','zxcv','zxcv');
 insert into jado_user (userNum,id,password,name ,googleId)				
 	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'1234','1234','1234','1234');
+insert into jado_user (userNum,id,password,name ,googleId)				
+	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'newyks118@gmail.com',null,null,null);
+insert into jado_user (userNum,id,password,name ,googleId)				
+	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'luckykhkx@gmail.com',null,null,null);
+insert into jado_user (userNum,id,password,name ,googleId)				
+	values ('U'||to_char(lpad(seq_user.nextval, 9, '0')),'pjw6454@gmail.com',null,null,null);
 
 insert into jado_project (proNum,title,userNum)
 	values ('P'||to_char(lpad(seq_pro.nextval, 9, '0')),'프로젝트1','U000000001');
@@ -252,6 +261,3 @@ insert into jado_theme (thmNum,proNum,themeName)
 	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','채팅2-1');
 insert into jado_theme (thmNum,proNum,themeName)
 	values ('T'||to_char(lpad(seq_thm.nextval, 9, '0')),'P000000002','채팅2-2');
-
-
-
