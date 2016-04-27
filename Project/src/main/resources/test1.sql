@@ -1,4 +1,4 @@
-f
+﻿f
 /* Drop Tables */
 
 DROP TABLE JADO_NOTICE CASCADE CONSTRAINTS;
@@ -102,7 +102,8 @@ CREATE TABLE JADO_PROJECT
 CREATE TABLE JADO_STORAGE
 (
 	FILENAME varchar2(200 char) NOT NULL,
-	THMNUM varchar2(10 char) NOT NULL
+	THMNUM varchar2(10 char) NOT NULL,
+	realpath varchar2(200 char) NOT NULL
 );
 
 
